@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+model AuthUser {
+  id String @id @map("_id")
+  rol String
+  username String @unique
+  auth_session AuthSession[]
+  auth_key     AuthKey[]
+  // here you can add custom fields for your user
+  // e.g. name, email, username, roles, etc.
+  // @@index([user_id]) 
+  @@map("auth_user")
+}
+
+model AuthSession {
+  id String @id @map("_id")
+  user_id        String
+  active_expires BigInt
+  idle_expires   BigInt
+  auth_user      AuthUser   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("auth_session")
+}
+
+model AuthKey {
+  id              String   @id @map("_id")
+  hashed_password String?
+  user_id         String
+  auth_user       AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  primary_key     Boolean?
+  expires         BigInt?
+
+  @@index([user_id])
+  @@map("auth_key")
+}
+
+model Product {
+  id String @id @map("_id")@default(auto()) @db.ObjectId
+  article String 
+  price Price[]
+  description String?
+  category_id  String @db.ObjectId
+  category Category @relation(references: [id], fields: [category_id], onDelete: Cascade)
+  brand_id String @db.ObjectId
+  brand Brand @relation(references: [id], fields: [brand_id], onDelete: Cascade)
+  size  String
+  @@unique([article, size], name: "unique_constraint")
+  @@map("products")
+}
+
+model Category{
+  id String @id @map("_id")  @default(auto()) @db.ObjectId
+  name String @unique
+  products Product[]
+  super_category_id String @db.ObjectId
+  supercategory SuperCategory @relation(references: [id], fields: [super_category_id], onDelete: Cascade)
+  @@map("categories")
+}
+model SuperCategory{
+  id String @id @map("_id")  @default(auto()) @db.ObjectId
+  name String @unique
+  categories Category[]
+  group_category_id String @db.ObjectId
+  group_category GroupCategory @relation(references: [id], fields: [group_category_id], onDelete: Cascade)
+  @@map("supercategories")
+}
+model GroupCategory{
+  id String @id @map("_id")  @default(auto()) @db.ObjectId
+  name String @unique
+  superCategories SuperCategory[]
+
+  @@map("groupcategories")
+
+}
+model Brand {
+  id String @id @map("_id") @default(auto()) @db.ObjectId
+  name String @unique
+  product Product[]
+  email String?
+  phone String?
+  url_img String?
+  
+  @@map("brands")
+}
+
+model Price {
+  id String @id @map("_id") @default(auto()) @db.ObjectId
+  product_id String  @db.ObjectId
+  product Product @relation(references: [id], fields: [product_id], onDelete: Cascade)
+  price Float
+  date DateTime
+  current_price Boolean?
+  @@map("prices")
+}
+
