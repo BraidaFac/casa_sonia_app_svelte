@@ -1,22 +1,33 @@
 <script lang="ts">
 	import { submit, loading } from '$lib/utils/excel_methods';
 
-	$: file = null;
+	$: file = '';
 </script>
 
 {#if !$loading}
-	<div class="files-form">
-		<h1>Files</h1>
+	<div class="flex flex-col items-center gap-2 mt-10">
+		<h1 class="text-3xl">Cargar excel</h1>
 		<form
+			class="flex flex-col gap-3 w-1/2"
 			on:submit|preventDefault={async (event) => {
 				const res = await submit(event);
-				console.log(await res?.text());
 			}}
 		>
-			<label for="file">Archivo</label>
-			<input bind:value={file} type="file" name="file" id="file" accept=".xlsx, .xls, .csv" />
-			<div>
-				<button disabled={!file} type="submit">Agregar</button>
+			<input
+				class="input"
+				bind:value={file}
+				type="file"
+				name="file"
+				id="file"
+				accept=".xlsx, .xls,"
+			/>
+			<div class="flex flex-row justify-center">
+				<button
+					class="btn disabled:variant-filled-error variant-filled-tertiary"
+					disabled={!file ||
+						!(file.split('.').reverse()[0] === 'xlsx' || file.split('.').reverse()[0] === 'xls')}
+					type="submit">Agregar</button
+				>
 			</div>
 		</form>
 	</div>
