@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 //import { prismaClient } from '$lib/server/prisma';
 //import { PrismaClient } from '@prisma/client';
-import {prismaClient} from "../../lib/server/prisma"
+import {prismaClient} from "$lib/server/prisma"
 
 export const load: PageServerLoad = async ({ params }) => {
 	

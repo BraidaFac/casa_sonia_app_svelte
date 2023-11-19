@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client';
-const prismaClient = new PrismaClient();
-
+// import { PrismaClient } from '@prisma/client';
+// const prismaClient = new PrismaClient();
+import { prismaClient } from "$lib/server/prisma";
 type GroupCategory = {
 	name: string;
 };

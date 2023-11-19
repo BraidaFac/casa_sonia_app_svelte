@@ -23,6 +23,7 @@ export const actions: Actions = {
 
 			redirect(304, '/');
 		} catch (err) {
+			console.log(err)
 			if (err instanceof LuciaError) {
 				return {
 					user: username,

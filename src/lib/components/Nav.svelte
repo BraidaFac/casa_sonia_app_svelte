@@ -10,7 +10,7 @@
 >
 	<svelte:fragment slot="lead"><a href="/"><span class="icon"></span></a></svelte:fragment>
 	<svelte:fragment slot="default"><h1 class="text-4xl">Casa Sonia</h1></svelte:fragment>
-	<svelte:fragment slot="trail">(actions)</svelte:fragment>
+	<svelte:fragment slot="trail"></svelte:fragment>
 </AppBar>
 
 <style>
