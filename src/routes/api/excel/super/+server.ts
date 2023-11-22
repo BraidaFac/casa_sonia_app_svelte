@@ -1,9 +1,9 @@
 
 import { prismaClient } from "$lib/server/prisma";
 
-type Category = {
+type SuperCategory = {
 	name: string;
-	super_category_id: string;
+	group_category_id: string;
 };
 interface Format {
 	CODIGO: string;
@@ -24,7 +24,9 @@ export const POST = async ({ request ,locals}) => {
 	try {
 		const data = (await request.json()) as Format[][];
 		for (const sheet of data) {
-			await processCategory(sheet); 
+			//await processGruops(sheet);
+			await processSuperCategory(sheet);
+			//await processCategory(sheet); 
 			//await processBrands(sheet);
 			//await processProducts(sheet);
 		}
@@ -33,20 +35,19 @@ export const POST = async ({ request ,locals}) => {
 		return new Response(JSON.stringify({ error }), { status: 500 });
 	}
 };
-
-async function processCategory(sheet: Format[]) {
-	const categories: Category[] = [];
-    const super_categories = await prismaClient.superCategory.findMany();
+async function processSuperCategory(sheet: Format[]) {
+	const super_category: SuperCategory[] = []
+	const group_categories = await prismaClient.groupCategory.findMany();
 	for (const row of sheet) {
-		const sr = super_categories.find((item) => item.name === row.SR);
-		if (!sr) {
+		const gsr = group_categories.find((item) => item.name === row.GSR);
+		if (!gsr) {
 			continue;
 		}
-		const category = { name: row.RUBRO, super_category_id: sr.id };
-		if (categories.findIndex((item) => item.name === row.RUBRO) === -1) {
-			categories.push(category);
+		const sr = { name: row.SR, group_category_id: gsr.id };
+		if (super_category.findIndex((item) => item.name === row.SR) === -1) {
+			super_category.push(sr);
 		}
 	}
-	await prismaClient.category.deleteMany({});
-	await prismaClient.category.createMany({ data: categories });
+	await prismaClient.superCategory.deleteMany({});
+	await prismaClient.superCategory.createMany({ data: super_category });
 }

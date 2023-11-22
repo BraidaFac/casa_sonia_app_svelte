@@ -29,7 +29,7 @@ export async function submit(event: Event) {
 		if (extension == '.XLS' || extension == '.XLSX') {
 			const fileReader = new FileReader();
 			fileReader.readAsBinaryString(file);
-			fileReader.onload = (event) => {
+			fileReader.onload = async (event) => {
 				const binaryData = event.target?.result;
 				const workbook = XLSX.read(binaryData, { type: 'binary' });
 				for (const sheet of workbook.SheetNames) {
@@ -38,9 +38,21 @@ export async function submit(event: Event) {
 					}) as Format[];
 					array_json_data.push(sheet_to_json);
 				}
-
-				sendData(array_json_data);
-				sendSuperGroup(array_json_data);
+				try{
+					loading.set(true);					
+					await sendGroup(array_json_data);
+					await sendSuperGroup(array_json_data);
+					await sendCategories(array_json_data);
+					await sendBrandes(array_json_data);
+					await sendProducts(array_json_data);
+					loading.set(false);
+					alert('Datos enviados correctamente');
+				}
+				catch(error){
+					console.log(error);
+					alert('Error al enviar los datos ' + error.error);
+					loading.set(false);
+				}
 			};
 		} else {
 			return new Response('Formato incorrecto', { status: 400 });
@@ -48,11 +60,8 @@ export async function submit(event: Event) {
 	}
 }
 
-async function sendData(sheets: Format[][]) {
-	try {
-		loading.set(true);
-
-		const res = await fetch('/api/excel/data', {
+async function sendGroup(sheets: Format[][]) {
+		const res = await fetch('/api/excel/group', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -60,23 +69,14 @@ async function sendData(sheets: Format[][]) {
 			body: JSON.stringify(sheets)
 		});
 		const data = await res.json();
-
-		if (data.status === 200) {
-			alert(JSON.stringify(data));
-			loading.set(false);
-		} else {
-			alert(JSON.stringify(data));
-			loading.set(false);
+		
+		if (!(res.status === 201)) {
+			throw data.error;
 		}
-	} catch (error) {
-		alert('Error');
-	}
 }
 
 async function sendSuperGroup(sheets: Format[][]) {
-	try {
-		loading.set(true);
-		const res = await fetch('/api/excel/category', {
+		const res = await fetch('/api/excel/super', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -84,15 +84,56 @@ async function sendSuperGroup(sheets: Format[][]) {
 			body: JSON.stringify(sheets)
 		});
 		const data = await res.json();
+		
+		if (!(res.status === 201)) {
+			throw data.error;
+		} 
 
-		if (data.status === 200) {
-			alert(JSON.stringify(data));
-			loading.set(false);
-		} else {
-			alert(JSON.stringify(data));
-			loading.set(false);
-		}
-	} catch (error) {
-		alert('Error');
-	}
 }
+
+async function sendCategories(sheets: Format[][]) {
+	const res = await fetch('/api/excel/category', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(sheets)
+	});
+	const data = await res.json();
+	
+	if (!(res.status === 201)) {
+		throw data.error;
+	} 
+
+}
+async function sendBrandes(sheets: Format[][]) {
+	const res = await fetch('/api/excel/brand', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(sheets)
+	});
+	const data = await res.json();
+	
+	if (!(res.status === 201)) {
+		throw data.error;
+	} 
+}
+
+async function sendProducts(sheets: Format[][]) {
+	const res = await fetch('/api/excel/products', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(sheets)
+	});
+	const data = await res.json();
+	
+	if (!(res.status === 201)) {
+		throw data.error;
+	} 
+
+}
+
