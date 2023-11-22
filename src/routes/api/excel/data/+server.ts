@@ -61,7 +61,7 @@ export const POST = async ({ request ,locals}) => {
 		}
 		for (const sheet of data) {
 			await processGruops(sheet);
-			await processSuperCategory(sheet);
+			//await processSuperCategory(sheet);
 			//await processCategory(sheet); 
 			//await processBrands(sheet);
 			//await processProducts(sheet);
