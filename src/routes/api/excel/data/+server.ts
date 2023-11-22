@@ -1,6 +1,7 @@
 // import { PrismaClient } from '@prisma/client';
-// const prismaClient = new PrismaClient();
 import { prismaClient } from "$lib/server/prisma";
+
+
 type GroupCategory = {
 	name: string;
 };
@@ -15,11 +16,7 @@ type Category = {
 };
 type Product = {
 	article: string;
-	price: {
-		price: number;
-		date: string;
-		current_price: boolean;
-	};
+	price: number
 	category_id: string;
 	brand_id: string;
 	description: string;
@@ -28,7 +25,6 @@ type Product = {
 type Brand = {
 	name: string;
 };
-
 interface Format {
 	CODIGO: string;
 	GSR: string;
@@ -40,7 +36,11 @@ interface Format {
 	MARCA: string;
 }
 
-export const POST = async ({ request }) => {
+export const POST = async ({ request ,locals}) => {
+	const session = await locals.auth.validate();
+	if (!session || session?.user.rol !== 'ADMIN') {
+		return new Response(JSON.stringify({ error: 'No autorizado' }), { status: 400 });
+	}
 	const responseObj: { error: string[]; status: number } = { error: [], status: 200 };
 	try {
 		const data = (await request.json()) as Format[][];
@@ -57,10 +57,10 @@ export const POST = async ({ request }) => {
 			return new Response(JSON.stringify(responseObj.error), { status: responseObj.status });
 		}
 		for (const sheet of data) {
-			/* await processGruops(sheet);
+			await processGruops(sheet);
 			await processSuperCategory(sheet);
-			await processCategory(sheet); */
-			//await processBrands(sheet);
+			await processCategory(sheet); 
+			await processBrands(sheet);
 			await processProducts(sheet);
 		}
 		return new Response(JSON.stringify({ success: true }), { status: 201 });
@@ -70,7 +70,7 @@ export const POST = async ({ request }) => {
 	}
 };
 
-async function processGruops(sheet: Format[]) {
+ async function processGruops(sheet: Format[]) {
 	const groups_category: GroupCategory[] = [];
 	sheet.forEach((row) => {
 		if (groups_category.findIndex((item) => item.name === row.GSR) === -1) {
@@ -80,7 +80,7 @@ async function processGruops(sheet: Format[]) {
 	await prismaClient.groupCategory.deleteMany({});
 	await prismaClient.groupCategory.createMany({ data: groups_category });
 }
-async function processSuperCategory(sheet: Format[]) {
+ async function processSuperCategory(sheet: Format[]) {
 	const super_category: SuperCategory[] = [];
 	for (const row of sheet) {
 		const gsr = await prismaClient.groupCategory.findUnique({ where: { name: row.GSR } });
@@ -96,7 +96,7 @@ async function processSuperCategory(sheet: Format[]) {
 	await prismaClient.superCategory.createMany({ data: super_category });
 }
 
-async function processCategory(sheet: Format[]) {
+ async function processCategory(sheet: Format[]) {
 	const categories: Category[] = [];
 	for (const row of sheet) {
 		const sr = await prismaClient.superCategory.findUnique({ where: { name: row.SR } });
@@ -112,8 +112,7 @@ async function processCategory(sheet: Format[]) {
 	await prismaClient.category.createMany({ data: categories });
 }
 
-async function processProducts(sheet: Format[]) {
-	const date = real_time();
+ async function processProducts(sheet: Format[]) {
 	const products: Product[] = [];
 	const response = { error: '', status: 200 };
 	for (const row of sheet) {
@@ -131,11 +130,7 @@ async function processProducts(sheet: Format[]) {
 		}
 		const product = {
 			article: row.CODIGO,
-			price: {
-				price: parseFloat(String(row.PRECIO).replace(',', '.')),
-				date: date.toISOString(),
-				current_price: true
-			},
+			price: parseFloat(String(row.PRECIO).replace(',', '.')),
 			category_id: category.id,
 			brand_id: brand.id,
 			description: row.DESCRIPCION,
@@ -148,66 +143,16 @@ async function processProducts(sheet: Format[]) {
 	}
 
 	try {
-		await prismaClient.product.deleteMany({});
-		for (const product of products) {
-			await prismaClient.product.create({
-				data: {
-					article: product.article,
-					price: {
-						create: product.price
-					},
-					category_id: product.category_id,
-					brand_id: product.brand_id,
-					description: product.description,
-					size: String(product.size)
-				}
-			});
-		}
+			await prismaClient.product.deleteMany({});
+			await prismaClient.product.createMany({ data: products });
 	} catch (error) {
-		console.log(error);
 		response.error = 'Error en el servidor';
 		response.status = 500;
 		throw response;
 	}
-	/* await prismaClient.product.upsert({
-			where: {
-				article: row.CODIGO.toString()
-			},
-			update: {
-				price: {
-					updateMany: {
-						where: {
-							current_price: true
-						},
-						data: {
-							current_price: false
-						}
-					},
-					create: {
-						price: Number(row.PRECIO),
-						date: date.toISOString(),
-						current_price: true
-					}
-				}
-			},
-			create: {
-				article: row.CODIGO.toString(),
-				price: {
-					create: {
-						price: Number(row.PRECIO),
-						date: date.toISOString(),
-						current_price: true
-					}
-				},
-				category_id: category[0].id,
-				brand_id: brand[0].id,
-				description: row?.DESCRIPCION ?? 'No tiene'
-			}
-		});
-	} */
 }
 
-async function processBrands(sheet: Format[]) {
+ async function processBrands(sheet: Format[]) {
 	const brandes: Brand[] = [];
 	sheet.forEach((row) => {
 		if (brandes.findIndex((item) => item.name === row.MARCA) === -1) {
@@ -217,7 +162,7 @@ async function processBrands(sheet: Format[]) {
 	await prismaClient.brand.deleteMany({});
 	await prismaClient.brand.createMany({ data: brandes });
 }
-function sanatizaceSheet(
+ function sanatizaceSheet(
 	sheets: Format[][],
 	responseObj: { error: string[]; status: number }
 ): { error: string[]; status: number } | undefined {
@@ -259,17 +204,12 @@ function sanatizaceSheet(
 		}
 	});
 	if (responseObj.error.length > 0) {
-		responseObj.status = 404;
+		responseObj.status = 400;
 		return responseObj;
 	}
 	return undefined;
 }
 
-function real_time(): Date {
-	const date = new Date();
-	date.setTime(date.getTime() - date.getTimezoneOffset() * 60 * 1000);
-	return date;
-}
 
 enum HEADER {
 	CODIGO = 'CODIGO',
@@ -281,3 +221,4 @@ enum HEADER {
 	PRECIO = 'PRECIO',
 	MARCA = 'MARCA'
 }
+

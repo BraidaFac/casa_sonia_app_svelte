@@ -2,17 +2,21 @@
 	import type { ActionData, PageData } from './$types';
 	import { enhance } from '$app/forms';
 	import Logo from '../../lib/components/Logo.svelte';
+	import { ProgressRadial } from '@skeletonlabs/skeleton';
 	export let form: ActionData;
 	let loading = false;
 </script>
 
-<div class="mt-10">
-	<div class="bg-form flex flex-row justify-center items-center">
+<div class="">
+	<div class="bg-form flex flex-col p-2 md:flex-row md:justify-center md:items-center">
+		<div class="logo">
+			<Logo --logo-size="20rem" />
+		</div>
 		{#if !loading}
-			<div class="p-4 rounded-lg">
+			<div class=" rounded-lg">
 				<form
 					method="POST"
-					class="flex flex-col w-96 gap-1 items-center"
+					class="flex flex-col md:w-96 gap-1 items-center"
 					use:enhance={() => {
 						loading = true;
 						return ({ update }) => {
@@ -45,11 +49,10 @@
 				</form>
 			</div>
 		{:else}
-			<p>Loading</p>
+		<ProgressRadial value={undefined}  stroke={20} meter="stroke-tertiary-500" track="stroke-tertiary-500/30"  />
+
 		{/if}
-		<div class="logo">
-			<Logo --logo-size="20rem" />
-		</div>
+		
 	</div>
 </div>
 

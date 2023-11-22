@@ -47,7 +47,7 @@ model AuthKey {
 model Product {
   id String @id @map("_id")@default(auto()) @db.ObjectId
   article String 
-  price Price[]
+  price Float
   description String?
   category_id  String @db.ObjectId
   category Category @relation(references: [id], fields: [category_id], onDelete: Cascade)
@@ -78,7 +78,6 @@ model GroupCategory{
   id String @id @map("_id")  @default(auto()) @db.ObjectId
   name String @unique
   superCategories SuperCategory[]
-
   @@map("groupcategories")
 
 }
@@ -93,13 +92,4 @@ model Brand {
   @@map("brands")
 }
 
-model Price {
-  id String @id @map("_id") @default(auto()) @db.ObjectId
-  product_id String  @db.ObjectId
-  product Product @relation(references: [id], fields: [product_id], onDelete: Cascade)
-  price Float
-  date DateTime
-  current_price Boolean?
-  @@map("prices")
-}
 

@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { submit, loading } from '$lib/utils/excel_methods';
+	import { ProgressRadial } from '@skeletonlabs/skeleton';
+	import { error } from '@sveltejs/kit';
 
 	$: file = '';
 </script>
@@ -10,7 +12,7 @@
 		<form
 			class="flex flex-col gap-3 w-1/2"
 			on:submit|preventDefault={async (event) => {
-				const res = await submit(event);
+				 await submit(event);
 			}}
 		>
 			<input
@@ -34,31 +36,10 @@
 {:else}
 	<div class="overlay" />
 	<div class="spinner">
-		<p>loader</p>
+		<ProgressRadial value={undefined}  stroke={20} meter="stroke-tertiary-500" track="stroke-tertiary-500/30"  />
+
 	</div>
 {/if}
 
-<style lang="scss">
-	.overlay {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background: rgba(0, 0, 0, 0.5);
-		z-index: 100;
-	}
-	.files-form {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-	}
-	.spinner {
-		z-index: 1000;
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-	}
+<style >
 </style>

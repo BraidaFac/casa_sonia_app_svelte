@@ -21,5 +21,5 @@ export const load: PageServerLoad = async ({ params }) => {
 		}
 	});
 
-	return { super_categories };
+	return { super_categories , group_category};
 };

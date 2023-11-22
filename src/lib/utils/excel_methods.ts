@@ -2,6 +2,8 @@ import { writable } from 'svelte/store';
 import * as XLSX from 'xlsx';
 export const loading = writable(false);
 
+
+
 interface Format {
 	CODIGO: string;
 	GSR: string;
@@ -13,7 +15,7 @@ interface Format {
 	MARCA: string;
 }
 export async function submit(event: Event) {
-	const array_json_data: Array<Format[]> = [];
+	const array_json_data: Array<Format[]> = [];	
 	if (!event.target) {
 		return new Response('No se pudo enviar el formulario', { status: 400 });
 	} else {
@@ -36,7 +38,7 @@ export async function submit(event: Event) {
 					}) as Format[];
 					array_json_data.push(sheet_to_json);
 				}
-				console.log(array_json_data);
+
 				sendData(array_json_data);
 			};
 		} else {
@@ -69,4 +71,4 @@ async function sendData(sheets: Format[][]) {
 		alert('Error');
 	}
 }
-//sanatization
+
