@@ -9,10 +9,11 @@
 
 <div class="">
 	<div class="bg-form flex flex-col p-2 md:flex-row md:justify-center md:items-center">
-		<div class="logo">
-			<Logo --logo-size="20rem" />
-		</div>
+		
 		{#if !loading}
+			<div class="logo">
+				<Logo --logo-size="20rem" />
+			</div>
 			<div class=" rounded-lg">
 				<form
 					method="POST"

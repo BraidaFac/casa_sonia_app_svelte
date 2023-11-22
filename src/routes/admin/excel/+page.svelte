@@ -7,6 +7,40 @@
 </script>
 
 {#if !$loading}
+	<div class="table-container w-1/2 mx-auto">
+		<h1 class="text-lg text-center"> Formato de excel</h1>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>CODIGO</th>
+					<th>DESCRIPCION</th>
+					<th>TALLES</th>
+					<th>PRECIO</th>
+					<th>RUBRO</th>
+					<th>MARCA</th>
+					<th>SR</th>
+					<th>GSR</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td colspan="8">Fila vacia</td>
+					
+				</tr>
+				<tr>
+					<td>data</td>
+					<td>data</td>
+					<td>data</td>
+					<td>data</td>
+					<td>data</td>
+					<td>data</td>
+					<td>data</td>
+					<td>data</td>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
 	<div class="flex flex-col items-center gap-2 mt-10">
 		<h1 class="text-3xl">Cargar excel</h1>
 		<form
@@ -42,4 +76,11 @@
 {/if}
 
 <style >
+	.table thead th{
+		font-size: small;
+	}
+	.table tbody td{
+		font-size: small;
+	}
+	
 </style>
