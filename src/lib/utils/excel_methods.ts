@@ -40,6 +40,7 @@ export async function submit(event: Event) {
 				}
 
 				sendData(array_json_data);
+				sendSuperGroup(array_json_data);
 			};
 		} else {
 			return new Response('Formato incorrecto', { status: 400 });
@@ -72,3 +73,26 @@ async function sendData(sheets: Format[][]) {
 	}
 }
 
+async function sendSuperGroup(sheets: Format[][]) {
+	try {
+		loading.set(true);
+		const res = await fetch('/api/excel/category', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(sheets)
+		});
+		const data = await res.json();
+
+		if (data.status === 200) {
+			alert(JSON.stringify(data));
+			loading.set(false);
+		} else {
+			alert(JSON.stringify(data));
+			loading.set(false);
+		}
+	} catch (error) {
+		alert('Error');
+	}
+}

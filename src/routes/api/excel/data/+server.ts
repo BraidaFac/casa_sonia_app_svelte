@@ -36,9 +36,6 @@ interface Format {
 	MARCA: string;
 }
 
-export const config = {
-	runtime: 'edge',
-  };
 export const POST = async ({ request ,locals}) => {
 	const session = await locals.auth.validate();
 	if (!session || session?.user.rol !== 'ADMIN') {
