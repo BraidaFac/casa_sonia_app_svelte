@@ -64,7 +64,7 @@ export const POST = async ({ request ,locals}) => {
 			await processSuperCategory(sheet);
 			await processCategory(sheet); 
 			await processBrands(sheet);
-			await processProducts(sheet);
+			//await processProducts(sheet);
 		}
 		return new Response(JSON.stringify({ success: true }), { status: 201 });
 	} catch (error) {
