@@ -68,8 +68,7 @@
 		</form>
 	</div>
 {:else}
-	<div class="overlay" />
-	<div class="spinner">
+	<div class="mx-auto w-fit">
 		<ProgressRadial value={undefined}  stroke={20} meter="stroke-tertiary-500" track="stroke-tertiary-500/30"  />
 
 	</div>
