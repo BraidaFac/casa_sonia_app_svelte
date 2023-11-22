@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client/edge';
 import { env } from '$env/dynamic/private';
 
 const prismaClient: PrismaClient = globalThis.__prisma || new PrismaClient();
