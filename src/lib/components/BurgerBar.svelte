@@ -11,7 +11,7 @@
 		  <button on:click={() => action_flag = !action_flag}
 		  type="button" class="inline-flex w-full justify-center gap-x-1.5 rounded-lg px-3 hover:bg-white hover:text-black py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300" id="menu-button" aria-expanded="true" aria-haspopup="true">
 			Acciones
-			
+		
 		  </button>
 		</div>
 
@@ -20,7 +20,7 @@
 		  <div class="py-1" role="none">
 			<a href="/admin/excel" on:click={() => action_flag = !action_flag} class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">Excel</a>
 			<form method="POST" action="/logout"role="none">
-			  <button type="submit"  on:click={() => action_flag = !action_flag} class="text-gray-700 block w-full px-4 py-2 text-left text-sm" role="menuitem" tabindex="-1" id="menu-item-3">Sign out</button>
+			  <button type="submit" class="text-gray-700 block w-full px-4 py-2 text-left text-sm" role="menuitem" tabindex="-1" id="menu-item-3">Sign out</button>
 			</form>
 		  </div>
 		</div>

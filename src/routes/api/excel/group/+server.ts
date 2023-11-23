@@ -127,22 +127,14 @@ export const POST = async ({ request ,locals}) => {
 	responseObj: { error: string[]; status: number }
 ): { error: string[]; status: number } | undefined {
 	sheets.forEach((sheet, i) => {
+		let currentIndex=0
 		const row = sheet[1];
 		for (const header in row) {
-			if (
-				!(
-					header === HEADER.CODIGO ||
-					header === HEADER.MARCA ||
-					header === HEADER.PRECIO ||
-					header === HEADER.RUBRO ||
-					header === HEADER.DESCRIPCION ||
-					header === HEADER.GSR ||
-					header === HEADER.SR ||
-					header === HEADER.TALLES
-				)
-			) {
+			if (header !== HEADER[currentIndex]) {
 				responseObj.error.push('Error en los titulos en hoja ' + (i + 1));
+				break;
 			}
+			currentIndex++;
 		}
 		if (responseObj.error.length === 0) {
 			for (const row of sheet) {
@@ -172,13 +164,13 @@ export const POST = async ({ request ,locals}) => {
 
 
 enum HEADER {
-	CODIGO = 'CODIGO',
-	GSR = 'GSR',
-	SR = 'SR',
-	RUBRO = 'RUBRO',
-	DESCRIPCION = 'DESCRIPCION',
-	TALLES = 'TALLES',
-	PRECIO = 'PRECIO',
-	MARCA = 'MARCA'
+	'CODIGO',
+	'DESCRIPCION',
+	'TALLES',
+	'PRECIO',
+	'RUBRO',
+	'MARCA',
+	'SR',
+	'GSR',
 }
 

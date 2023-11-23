@@ -30,9 +30,11 @@ export const searchHandler = <T extends Record<PropertyKey, any>>(store: SearchS
 	{
 		const searchCat = store.category?.toLowerCase() || '';
 		const searchTerm = store.search.toLowerCase() || '';
+		const searchBrand = store.brand?.toLowerCase() || '';
 		const searchDescription = store.description?.toLowerCase() || '';
 		store.filtered = store.data.filter((item) => {
 			return (
+				item.brand.name.toLowerCase().includes(searchBrand) &&
 				item.searchTerms.toLowerCase().includes(searchCat) &&
 				item.searchTerms.toLowerCase().includes(searchTerm) &&
 				item.searchTerms.toLowerCase().includes(searchDescription) 

@@ -49,8 +49,7 @@ export async function submit(event: Event) {
 					alert('Datos enviados correctamente');
 				}
 				catch(error){
-					console.log(error);
-					alert('Error al enviar los datos ' + error.error);
+					alert(error);
 					loading.set(false);
 				}
 			};
@@ -70,8 +69,10 @@ async function sendGroup(sheets: Format[][]) {
 		});
 		const data = await res.json();
 		
+		
 		if (!(res.status === 201)) {
-			throw data.error;
+			
+			throw data;
 		}
 }
 
@@ -86,7 +87,7 @@ async function sendSuperGroup(sheets: Format[][]) {
 		const data = await res.json();
 		
 		if (!(res.status === 201)) {
-			throw data.error;
+			throw data;
 		} 
 
 }
@@ -102,7 +103,7 @@ async function sendCategories(sheets: Format[][]) {
 	const data = await res.json();
 	
 	if (!(res.status === 201)) {
-		throw data.error;
+		throw data;
 	} 
 
 }
@@ -117,7 +118,7 @@ async function sendBrandes(sheets: Format[][]) {
 	const data = await res.json();
 	
 	if (!(res.status === 201)) {
-		throw data.error;
+		throw data;
 	} 
 }
 
@@ -132,7 +133,7 @@ async function sendProducts(sheets: Format[][]) {
 	const data = await res.json();
 	
 	if (!(res.status === 201)) {
-		throw data.error;
+		throw data;
 	} 
 
 }

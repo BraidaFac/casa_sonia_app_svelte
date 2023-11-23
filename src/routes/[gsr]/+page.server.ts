@@ -20,6 +20,19 @@ export const load: PageServerLoad = async ({ params }) => {
 			group_category_id: group_category?.id
 		}
 	});
-
-	return { super_categories , group_category};
+	return { 	super_categories:orderSuperCategory(super_categories)
+		, group_category};
 };
+function orderSuperCategory(super_categories: any[]){
+	super_categories.sort(
+		function (a, b) {
+			if (a.name > b.name) {
+			  return 1;
+			}
+			if (a.name < b.name) {
+			  return -1;}
+
+			return 0;
+		  })
+		
+		return super_categories;}

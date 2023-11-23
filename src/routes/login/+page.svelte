@@ -9,7 +9,6 @@
 
 <div class="">
 	<div class="bg-form flex flex-col p-2 md:flex-row md:justify-center md:items-center">
-		
 		{#if !loading}
 			<div class="logo">
 				<Logo --logo-size="20rem" />
@@ -50,7 +49,7 @@
 				</form>
 			</div>
 		{:else}
-		<ProgressRadial value={undefined}  stroke={20} meter="stroke-tertiary-500" track="stroke-tertiary-500/30"  />
+		<ProgressRadial value={undefined} class="self-center" stroke={20} meter="stroke-tertiary-500" track="stroke-tertiary-500/30"  />
 
 		{/if}
 		

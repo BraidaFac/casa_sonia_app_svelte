@@ -15,7 +15,6 @@ export const actions: Actions = {
 	default: async ({ request }) => {
 		const formData = Object.fromEntries(await request.formData()) as Record<string, string>;
 		try {
-			console.log(formData);
 			const result = registerSchema.parse(formData);
 			await auth.createUser({
 				key: {
@@ -25,7 +24,7 @@ export const actions: Actions = {
 				},
 				attributes: {
 					username: result.username,
-					rol: 'ADMIN'
+					rol: 'USER'
 				}
 			});
 		} catch (error) {
