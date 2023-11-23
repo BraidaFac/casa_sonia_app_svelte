@@ -3,6 +3,7 @@
 	import { enhance } from '$app/forms';
 	import Logo from '../../lib/components/Logo.svelte';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
+	import { set } from 'zod';
 	export let form: ActionData;
 	let loading = false;
 </script>
@@ -19,9 +20,12 @@
 					class="flex flex-col md:w-96 gap-1 items-center"
 					use:enhance={() => {
 						loading = true;
-						return ({ update }) => {
-							loading = false;
+						
+						return ({ update ,result}) => {	
 							update();
+							setTimeout(() => {
+								loading = false;
+							}, 500);
 						};
 					}}
 				>

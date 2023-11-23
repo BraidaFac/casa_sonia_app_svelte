@@ -20,10 +20,8 @@ export const actions: Actions = {
 			const user = await auth.useKey('username', username.toLowerCase(), password);
 			const session = await auth.createSession({ userId: user.userId, attributes: {} });
 			locals.auth.setSession(session);
-
-			redirect(304, '/');
+			throw redirect(304, '/');
 		} catch (err) {
-			console.log(err)
 			if (err instanceof LuciaError) {
 				return {
 					user: username,
