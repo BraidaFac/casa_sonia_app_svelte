@@ -59,7 +59,7 @@
 	{#if $searchStore.filtered.length === 0}
 		<p class="text-xl text-center mt-3">No hay productos</p>
 	{:else}
-	<table class="table table-hover table-fixed ">
+	<table class="table table-hover md:table-fixed ">
 		<thead >
 			<tr>
 				<th >Descripcion</th>
@@ -88,7 +88,9 @@
 .table {
   width: 100%;
 }
-td:nth-child(1) {
+
+  @media(min-width: 768px) {
+	td:nth-child(1) {
 	width: 30% !important
   }
   td:nth-child(2) {
@@ -98,21 +100,10 @@ td:nth-child(1) {
   }td:nth-child(4) {
 	width: 30% !important
   }
-  th:nth-child(1) {
-	width: 30% !important
-  }
-  th:nth-child(2) {
-	width: 20% !important
-  }th:nth-child(3) {
-	width: 20% !important
-  }th:nth-child(4) {
-	width: 30% !important
-  }
-
   td:nth-child(1) {
 	white-space: nowrap;
 	overflow:auto;
-	text-align: left;}
+	text-align: left;}}
   @media (max-width: 768px) {
 	.table thead tr {text-align: left;
 }
