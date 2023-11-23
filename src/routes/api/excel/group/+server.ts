@@ -80,37 +80,6 @@ export const POST = async ({ request ,locals}) => {
 	await prismaClient.groupCategory.deleteMany({});
 	await prismaClient.groupCategory.createMany({ data: groups_category });
 }
- async function processSuperCategory(sheet: Format[]) {
-	const super_category: SuperCategory[] = [];
-	for (const row of sheet) {
-		const gsr = await prismaClient.groupCategory.findUnique({ where: { name: row.GSR } });
-		if (!gsr) {
-			continue;
-		}
-		const sr = { name: row.SR, group_category_id: gsr.id };
-		if (super_category.findIndex((item) => item.name === row.SR) === -1) {
-			super_category.push(sr);
-		}
-	}
-	await prismaClient.superCategory.deleteMany({});
-	await prismaClient.superCategory.createMany({ data: super_category });
-}
-
- async function processCategory(sheet: Format[]) {
-	const categories: Category[] = [];
-	for (const row of sheet) {
-		const sr = await prismaClient.superCategory.findUnique({ where: { name: row.SR } });
-		if (!sr) {
-			continue;
-		}
-		const category = { name: row.RUBRO, super_category_id: sr.id };
-		if (categories.findIndex((item) => item.name === row.RUBRO) === -1) {
-			categories.push(category);
-		}
-	}
-	await prismaClient.category.deleteMany({});
-	await prismaClient.category.createMany({ data: categories });
-}
 
  async function processProducts(sheet: Format[]) {
 	const products: Product[] = [];
@@ -152,16 +121,7 @@ export const POST = async ({ request ,locals}) => {
 	}
 }
 
- async function processBrands(sheet: Format[]) {
-	const brandes: Brand[] = [];
-	sheet.forEach((row) => {
-		if (brandes.findIndex((item) => item.name === row.MARCA) === -1) {
-			brandes.push({ name: row.MARCA });
-		}
-	});
-	await prismaClient.brand.deleteMany({});
-	await prismaClient.brand.createMany({ data: brandes });
-}
+
  function sanatizaceSheet(
 	sheets: Format[][],
 	responseObj: { error: string[]; status: number }

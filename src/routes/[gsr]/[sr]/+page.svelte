@@ -26,9 +26,7 @@
 		}
 	}
 </script>
-<div class="px-2 relative mt-0 mb-10">
-	<a  class="btn btn-sm variant-ghost-error fixed z-30"href="./">Volver</a>
-</div>
+
 <div class="filters flex md:flex-row flex-col gap-2 mb-2 md:p-4 p-2">
 		<select class="select" bind:value={filterCategory} on:change={filterCat} name="category" id="category">
 			<option selected value="">Todos</option>
@@ -48,11 +46,9 @@
 		<thead >
 			<tr>
 				<th >Descripcion</th>
-				<th>Marca</th>
 				<th>Precio</th>
-				<th>Rubro</th>
 				<th>Talles
-				</th>
+				<th>Rubro</th>
 
 			</tr>
 		</thead>
@@ -60,10 +56,9 @@
 			{#each $searchStore.filtered as prod (prod.id)}
 				<tr>
 					<td >{prod.description}</td>
-					<td>{prod.brand.name}</td>
 					<td>${prod.price}</td>
-					<td>{prod.category.name}</td>
 					<td>{prod.size}</td>
+					<td>{prod.category.name}</td>
 
 				</tr>
 			{/each}
@@ -92,18 +87,16 @@ td:nth-child(1) {
 
   
   @media (max-width: 768px) {
-	.table thead tr {
-	text-align: center;
+	.table thead tr {text-align: center;
 }
   .table tbody tr td{
-	text-align: center;
 	font-size: small !important;
   }
-td:nth-child(1) {
-	max-width: 12rem ;
+	td:nth-child(1) {
 	white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;}
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+	text-align: left;}
 td:nth-child(2) {
 	white-space: nowrap;
   overflow: hidden;
