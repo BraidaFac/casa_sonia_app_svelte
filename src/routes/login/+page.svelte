@@ -25,7 +25,7 @@
 							update();
 							setTimeout(() => {
 								loading = false;
-							}, 500);
+							}, 1000);
 						};
 					}}
 				>
