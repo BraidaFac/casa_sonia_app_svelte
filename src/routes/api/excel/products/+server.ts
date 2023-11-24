@@ -1,10 +1,9 @@
 // import { PrismaClient } from '@prisma/client';
-import { prismaClient } from "$lib/server/prisma";
-import { BRAND } from "zod";
+import { prismaClient } from '$lib/server/prisma';
 
 type Product = {
 	article: string;
-	price: number
+	price: number;
 	category_id: string;
 	brand_id: string;
 	description: string;
@@ -22,12 +21,11 @@ interface Format {
 	MARCA: string;
 }
 
-export const POST = async ({ request ,locals}) => {
+export const POST = async ({ request, locals }) => {
 	const session = await locals.auth.validate();
 	if (!session || session?.user.rol !== 'ADMIN') {
 		return new Response(JSON.stringify({ error: 'No autorizado' }), { status: 400 });
 	}
-	const responseObj: { error: string[]; status: number } = { error: [], status: 200 };
 	try {
 		const data = (await request.json()) as Format[][];
 		for (const sheet of data) {
@@ -39,19 +37,19 @@ export const POST = async ({ request ,locals}) => {
 	}
 };
 
- async function processProducts(sheet: Format[]) {
+async function processProducts(sheet: Format[]) {
 	const products: Product[] = [];
 	const response = { error: '', status: 200 };
-    const categories = await prismaClient.category.findMany();
-    const brandes= await prismaClient.brand.findMany();
+	const categories = await prismaClient.category.findMany();
+	const brandes = await prismaClient.brand.findMany();
 	for (const row of sheet) {
-        const category=categories.find((item) => item.name === row.RUBRO);
+		const category = categories.find((item) => item.name === row.RUBRO);
 		if (!category) {
 			response.error = 'No existe la categoria ' + row.RUBRO;
 			response.status = 404;
 			break;
 		}
-        const brand=brandes.find((item) => item.name === row.MARCA);
+		const brand = brandes.find((item) => item.name === row.MARCA);
 		if (!brand) {
 			response.error = 'No existe la marca ' + row.MARCA;
 			response.status = 404;
@@ -59,11 +57,11 @@ export const POST = async ({ request ,locals}) => {
 		}
 		const product = {
 			article: row.CODIGO,
-			price: parseFloat(String(row.PRECIO).replace(',', '.')),
+			price: Math.trunc(parseFloat(String(row.PRECIO).replace(',', '.'))),
 			category_id: category.id,
 			brand_id: brand.id,
 			description: row.DESCRIPCION,
-			size: row.TALLES
+			size: String(row.TALLES)
 		};
 		products.push(product);
 	}
@@ -72,16 +70,13 @@ export const POST = async ({ request ,locals}) => {
 	}
 
 	try {
-			await prismaClient.product.deleteMany({});
-			await prismaClient.product.createMany({ data: products });
+		await prismaClient.product.deleteMany({});
+		await prismaClient.product.createMany({ data: products });
 	} catch (error) {
+		console.log(error);
+
 		response.error = 'Error en el servidor';
 		response.status = 500;
 		throw response;
 	}
 }
-
-
- 
-
-

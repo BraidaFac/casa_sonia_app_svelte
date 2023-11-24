@@ -1,5 +1,4 @@
-
-import { prismaClient } from "$lib/server/prisma";
+import { prismaClient } from '$lib/server/prisma';
 type Brand = {
 	name: string;
 };
@@ -13,12 +12,11 @@ interface Format {
 	PRECIO: string;
 	MARCA: string;
 }
-export const POST = async ({ request ,locals}) => {
+export const POST = async ({ request, locals }) => {
 	const session = await locals.auth.validate();
 	if (!session || session?.user.rol !== 'ADMIN') {
 		return new Response(JSON.stringify({ error: 'No autorizado' }), { status: 400 });
 	}
-	const responseObj: { error: string[]; status: number } = { error: [], status: 200 };
 	try {
 		const data = (await request.json()) as Format[][];
 		for (const sheet of data) {
@@ -36,7 +34,7 @@ async function processBrands(sheet: Format[]) {
 			brandes.push({ name: row.MARCA });
 		}
 	});
-    
+
 	await prismaClient.brand.deleteMany({});
 	await prismaClient.brand.createMany({ data: brandes });
 }

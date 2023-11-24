@@ -2,8 +2,6 @@ import { writable } from 'svelte/store';
 import * as XLSX from 'xlsx';
 export const loading = writable(false);
 
-
-
 interface Format {
 	CODIGO: string;
 	GSR: string;
@@ -15,7 +13,7 @@ interface Format {
 	MARCA: string;
 }
 export async function submit(event: Event) {
-	const array_json_data: Array<Format[]> = [];	
+	const array_json_data: Array<Format[]> = [];
 	if (!event.target) {
 		return new Response('No se pudo enviar el formulario', { status: 400 });
 	} else {
@@ -38,8 +36,8 @@ export async function submit(event: Event) {
 					}) as Format[];
 					array_json_data.push(sheet_to_json);
 				}
-				try{
-					loading.set(true);					
+				try {
+					loading.set(true);
 					await sendGroup(array_json_data);
 					await sendSuperGroup(array_json_data);
 					await sendCategories(array_json_data);
@@ -47,9 +45,8 @@ export async function submit(event: Event) {
 					await sendProducts(array_json_data);
 					loading.set(false);
 					alert('Datos enviados correctamente');
-				}
-				catch(error){
-					alert(error);
+				} catch (error) {
+					alert(JSON.stringify(error));
 					loading.set(false);
 				}
 			};
@@ -60,36 +57,33 @@ export async function submit(event: Event) {
 }
 
 async function sendGroup(sheets: Format[][]) {
-		const res = await fetch('/api/excel/group', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(sheets)
-		});
-		const data = await res.json();
-		
-		
-		if (!(res.status === 201)) {
-			
-			throw data;
-		}
+	const res = await fetch('/api/excel/group', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(sheets)
+	});
+	const data = await res.json();
+
+	if (!(res.status === 201)) {
+		throw data;
+	}
 }
 
 async function sendSuperGroup(sheets: Format[][]) {
-		const res = await fetch('/api/excel/super', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(sheets)
-		});
-		const data = await res.json();
-		
-		if (!(res.status === 201)) {
-			throw data;
-		} 
+	const res = await fetch('/api/excel/super', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(sheets)
+	});
+	const data = await res.json();
 
+	if (!(res.status === 201)) {
+		throw data;
+	}
 }
 
 async function sendCategories(sheets: Format[][]) {
@@ -101,11 +95,10 @@ async function sendCategories(sheets: Format[][]) {
 		body: JSON.stringify(sheets)
 	});
 	const data = await res.json();
-	
+
 	if (!(res.status === 201)) {
 		throw data;
-	} 
-
+	}
 }
 async function sendBrandes(sheets: Format[][]) {
 	const res = await fetch('/api/excel/brand', {
@@ -116,10 +109,10 @@ async function sendBrandes(sheets: Format[][]) {
 		body: JSON.stringify(sheets)
 	});
 	const data = await res.json();
-	
+
 	if (!(res.status === 201)) {
 		throw data;
-	} 
+	}
 }
 
 async function sendProducts(sheets: Format[][]) {
@@ -131,10 +124,9 @@ async function sendProducts(sheets: Format[][]) {
 		body: JSON.stringify(sheets)
 	});
 	const data = await res.json();
-	
+	console.log(data);
+
 	if (!(res.status === 201)) {
 		throw data;
-	} 
-
+	}
 }
-

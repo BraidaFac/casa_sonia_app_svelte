@@ -1,5 +1,4 @@
-
-import { prismaClient } from "$lib/server/prisma";
+import { prismaClient } from '$lib/server/prisma';
 
 type Category = {
 	name: string;
@@ -15,16 +14,15 @@ interface Format {
 	PRECIO: string;
 	MARCA: string;
 }
-export const POST = async ({ request ,locals}) => {
+export const POST = async ({ request, locals }) => {
 	const session = await locals.auth.validate();
 	if (!session || session?.user.rol !== 'ADMIN') {
 		return new Response(JSON.stringify({ error: 'No autorizado' }), { status: 400 });
 	}
-	const responseObj: { error: string[]; status: number } = { error: [], status: 200 };
 	try {
 		const data = (await request.json()) as Format[][];
 		for (const sheet of data) {
-			await processCategory(sheet); 
+			await processCategory(sheet);
 			//await processBrands(sheet);
 			//await processProducts(sheet);
 		}
@@ -36,7 +34,7 @@ export const POST = async ({ request ,locals}) => {
 
 async function processCategory(sheet: Format[]) {
 	const categories: Category[] = [];
-    const super_categories = await prismaClient.superCategory.findMany();
+	const super_categories = await prismaClient.superCategory.findMany();
 	for (const row of sheet) {
 		const sr = super_categories.find((item) => item.name === row.SR);
 		if (!sr) {
