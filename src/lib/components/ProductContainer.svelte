@@ -1,20 +1,14 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-	export let data: PageData;
 	import { createSearchStore, searchHandler } from '$lib/stores/filter';
 	import { onDestroy } from 'svelte';
-	const { ordered_products } = data;
-	const { categories } = data;
-	const { brandes } = data;
-
+	export let products;
+	let filter = '';
 	//filter
-	const searchProducts = ordered_products.map((product) => ({
+	const searchProducts = products.map((product) => ({
 		...product,
 		searchTerms: `${product.brand.name} ${product.description} ${product.category.name}`
 	}));
 	const searchStore = createSearchStore(searchProducts);
-	let filterCategory: string = '';
-	let filterBrand: string = '';
 
 	const unsubscribe = searchStore.subscribe((model: any) => searchHandler(model));
 
@@ -22,59 +16,24 @@
 		unsubscribe();
 	});
 
-	function filterCat() {
-		{
-			$searchStore.category = `${filterCategory}`;
-		}
-	}
-	function filterBrandes() {
-		{
-			$searchStore.brand = `${filterBrand}`;
-		}
-	}
-
 	function addThousandSeparator(price: number) {
 		return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 	}
+
+	$: {
+		if (filter.length > 3) {
+			$searchStore.search = filter;
+		} else {
+			$searchStore.search = undefined;
+		}
+	}
 </script>
 
-<div class="filters flex md:flex-row md:justify-stretch flex-col gap-2 mb-2 md:p-4 p-2 w-full">
-	<div class="md:w-1/2 flex flex-row">
-		<select
-			class="select"
-			bind:value={filterCategory}
-			on:change={filterCat}
-			name="category"
-			id="category"
-		>
-			<option selected value="">Rubro</option>
-			{#each categories as cat (cat.id)}
-				<option value={cat.name}>{cat.name}</option>
-			{/each}
-		</select>
-		<select
-			class="select"
-			bind:value={filterBrand}
-			on:change={filterBrandes}
-			name="brand"
-			id="brand"
-		>
-			<option selected value="">Marca</option>
-			{#each brandes as brand}
-				<option value={brand.name}>{brand.name}</option>
-			{/each}
-		</select>
-	</div>
-	<div class="md:w-1/2">
-		<input type="search" class="input" placeholder="Buscar" bind:value={$searchStore.search} />
-	</div>
+<div class="md:w-1/2 md:mx-auto px-3">
+	<input type="search" class="input" placeholder="Buscar" bind:value={filter} />
 </div>
-
 <div class="table-container md:p-4 p-2">
-	<!-- Native Table Element -->
-	{#if $searchStore.filtered.length === 0}
-		<p class="text-xl text-center mt-3">No hay productos</p>
-	{:else}
+	{#if $searchStore.filtered.length !== 0}
 		<table class="table table-hover md:table-fixed">
 			<thead>
 				<tr>
@@ -109,12 +68,12 @@
 	@media (min-width: 768px) {
 		td:nth-child(1) {
 			width: 30% !important;
-		}
-		td:nth-child(2) {
-			width: 20% !important;
 			white-space: nowrap;
 			overflow: auto;
 			text-align: left;
+		}
+		td:nth-child(2) {
+			width: 20% !important;
 		}
 		td:nth-child(3) {
 			width: 20% !important;

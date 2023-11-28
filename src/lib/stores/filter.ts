@@ -3,10 +3,10 @@ import { writable } from 'svelte/store';
 export interface SearchStoreModel<T extends Record<PropertyKey, any>> {
 	data: T[];
 	filtered: T[];
-	search: string;
+	search: string | undefined;
 	category?: string;
 	description?: string;
-    brand?: string;
+	brand?: string;
 }
 
 export const createSearchStore = <T extends Record<PropertyKey, any>>(data: T[]) => {
@@ -16,7 +16,7 @@ export const createSearchStore = <T extends Record<PropertyKey, any>>(data: T[])
 		search: '',
 		category: '',
 		description: '',
-        brand: '',
+		brand: ''
 	});
 
 	return {
@@ -29,7 +29,7 @@ export const createSearchStore = <T extends Record<PropertyKey, any>>(data: T[])
 export const searchHandler = <T extends Record<PropertyKey, any>>(store: SearchStoreModel<T>) => {
 	{
 		const searchCat = store.category?.toLowerCase() || '';
-		const searchTerm = store.search.toLowerCase() || '';
+		const searchTerm = store.search?.toLowerCase();
 		const searchBrand = store.brand?.toLowerCase() || '';
 		const searchDescription = store.description?.toLowerCase() || '';
 		store.filtered = store.data.filter((item) => {
@@ -37,7 +37,7 @@ export const searchHandler = <T extends Record<PropertyKey, any>>(store: SearchS
 				item.brand.name.toLowerCase().includes(searchBrand) &&
 				item.searchTerms.toLowerCase().includes(searchCat) &&
 				item.searchTerms.toLowerCase().includes(searchTerm) &&
-				item.searchTerms.toLowerCase().includes(searchDescription) 
+				item.searchTerms.toLowerCase().includes(searchDescription)
 			);
 		});
 	}
