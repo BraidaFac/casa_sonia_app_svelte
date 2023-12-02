@@ -1,63 +1,76 @@
 <script lang="ts">
-	import { submitPDF, loading ,pdfData} from '$lib/utils/excel_methods';
-	import { ProgressRadial } from '@skeletonlabs/skeleton';
-	import * as pdfMake from "pdfmake/build/pdfmake";
-	import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+	import { enhance } from '$app/forms';
+	import pdfMake from 'pdfmake/build/pdfmake';
+	import pdfFonts from 'pdfmake/build/vfs_fonts';
 
-(<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
+	pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-	$: file = '';
-
-
-	pdfMake.createPdf(docDefinition).download();
-
+	const createPDF = (
+		data: {
+			GSR: string;
+			SR: string;
+			TALLES: string;
+			MARCA: string;
+			DESCRIPCION: string;
+			PRECIO: string | number;
+		}[]
+	) => {
+		const header = [
+			{ text: 'GSR', fillColor: 'grey', fontSize: 10, margin: [0, 2, 0, 2] },
+			{ text: 'SR', fillColor: 'grey', fontSize: 10, margin: [0, 2, 0, 2] },
+			{ text: 'DESCRIPCION', fillColor: 'grey', fontSize: 10, margin: [0, 2, 0, 2] },
+			{ text: 'TALLES', fillColor: 'grey', fontSize: 10, margin: [0, 2, 0, 2] },
+			{ text: 'MARCA', fillColor: 'grey', fontSize: 10, margin: [0, 2, 0, 2] },
+			{ text: 'PRECIO', fillColor: 'grey', fontSize: 10, margin: [0, 2, 0, 2] }
+		];
+		const heightArray = Array.from({ length: data.length + 1 }, () => 15);
+		const body = [header].concat(
+			data.map((prod) => {
+				return [prod.GSR, prod.SR, prod.DESCRIPCION, prod.TALLES, prod.MARCA, `$${prod.PRECIO}`];
+			})
+		);
+		const pdfDefinition = {
+			footer: function (currentPage, pageCount) {
+				return [{ text: 'Pagina ' + currentPage.toString(), alignment: 'center' }];
+			},
+			header: function (currentPage, pageSize) {
+				return [
+					{ text: 'PRECIOS LISTA MARCA', alignment: 'center', margin: [0, 10, 0, 0], fontSize: 15 }
+				];
+			},
+			content: [
+				{
+					fontSize: 8,
+					layout: 'lightHorizontalLines',
+					table: {
+						heights: [...heightArray],
+						headerRows: 1,
+						widths: [20, 130, 190, 35, 'auto', 'auto'],
+						body: body
+					},
+					width: '100%'
+				}
+			]
+		};
+		pdfMake.createPdf(pdfDefinition).open();
+		//download(`ListaPrecios-${new Date().getFullYear()}-${new Date().getMonth() + 1}.pdf`)
+	};
 </script>
 
-{#if !$loading}
-	
-	<div class="flex flex-col items-center gap-2 mt-10">
-		<h1 class="text-3xl">Cargar PDF</h1>
+<div class="flex flex-col items-center gap-2 mt-10">
+	<h1 class="text-3xl">PDF</h1>
+	<div class="flex flex-row justify-center">
 		<form
-			class="flex flex-col gap-3 w-1/2"
-			on:submit|preventDefault={async (event) => {
-				 await submitPDF(event);
+			method="POST"
+			use:enhance={() => {
+				return async ({ result }) => {
+					createPDF(result.data);
+				};
 			}}
 		>
-			<input
-				class="input"
-				bind:value={file}
-				type="file"
-				name="file"
-				id="file"
-				accept=".xlsx, .xls,"
-			/>
-			<div class="flex flex-row justify-center">
-				<button
-					class="btn disabled:variant-filled-error variant-filled-tertiary"
-					disabled={!file ||
-						!(file.split('.').reverse()[0] === 'xlsx' || file.split('.').reverse()[0] === 'xls')}
-					type="submit">Agregar</button
-				>
-			</div>
+			<button class="btn disabled:variant-filled-error variant-filled-tertiary" type="submit"
+				>GENERAR PDF</button
+			>
 		</form>
 	</div>
-
-	{#if $pdfData.length}
-	<p>Se cargo</p>
-	{/if}
-{:else}
-	<div class="mx-auto w-fit">
-		<ProgressRadial value={undefined}  stroke={20} meter="stroke-tertiary-500" track="stroke-tertiary-500/30"  />
-
-	</div>
-{/if}
-
-<style >
-	.table thead th{
-		font-size: small;
-	}
-	.table tbody td{
-		font-size: small;
-	}
-	
-</style>
+</div>
