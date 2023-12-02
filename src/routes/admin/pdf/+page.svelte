@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import pdfMake from 'pdfmake/build/pdfmake.js';
-	import pdfFonts from 'pdfmake/build/vfs_fonts.js';
+	import * as pdfFonts from 'pdfmake/build/vfs_fonts.js';
 
 	pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
