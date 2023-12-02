@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import pdfMake from 'pdfmake/build/pdfmake';
-	import pdfFonts from 'pdfmake/build/vfs_fonts';
+	import pdfMake from 'pdfmake/build/pdfmake.js';
+	import pdfFonts from 'pdfmake/build/vfs_fonts.js';
 
 	pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -30,10 +30,10 @@
 			})
 		);
 		const pdfDefinition = {
-			footer: function (currentPage, pageCount) {
+			footer: function (currentPage) {
 				return [{ text: 'Pagina ' + currentPage.toString(), alignment: 'center' }];
 			},
-			header: function (currentPage, pageSize) {
+			header: function () {
 				return [
 					{ text: 'PRECIOS LISTA MARCA', alignment: 'center', margin: [0, 10, 0, 0], fontSize: 15 }
 				];
@@ -52,8 +52,9 @@
 				}
 			]
 		};
-		pdfMake.createPdf(pdfDefinition).open();
-		//download(`ListaPrecios-${new Date().getFullYear()}-${new Date().getMonth() + 1}.pdf`)
+		pdfMake
+			.createPdf(pdfDefinition)
+			.download(`ListaPrecios-${new Date().getFullYear()}-${new Date().getMonth() + 1}.pdf`);
 	};
 </script>
 
