@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import pdfMake from 'pdfmake/build/pdfmake.js';
-	import * as pdfFonts from 'pdfmake/build/vfs_fonts.js';
+	import * as pdfMake from 'pdfmake/build/pdfmake';
+	import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+	import { onMount } from 'svelte';
 
-	pdfMake.vfs = pdfFonts.pdfMake.vfs;
+	onMount(() => {
+		(<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
+	});
 
 	const createPDF = (
 		data: {
