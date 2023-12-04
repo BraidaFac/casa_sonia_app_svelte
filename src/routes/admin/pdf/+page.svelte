@@ -7,6 +7,9 @@
 	onMount(() => {
 		(<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 	});
+	function addThousandSeparator(price: number) {
+		return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+	}
 
 	const createPDF = (
 		data: {
@@ -29,7 +32,14 @@
 		const heightArray = Array.from({ length: data.length + 1 }, () => 15);
 		const body = [header].concat(
 			data.map((prod) => {
-				return [prod.GSR, prod.SR, prod.DESCRIPCION, prod.TALLES, prod.MARCA, `$${prod.PRECIO}`];
+				return [
+					prod.GSR,
+					prod.SR,
+					prod.DESCRIPCION,
+					prod.TALLES,
+					prod.MARCA,
+					{ text: `$${addThousandSeparator(Number(prod.PRECIO))}`, bold: true }
+				];
 			})
 		);
 		const pdfDefinition = {
@@ -55,9 +65,9 @@
 				}
 			]
 		};
-		pdfMake
-			.createPdf(pdfDefinition)
-			.download(`ListaPrecios-${new Date().getFullYear()}-${new Date().getMonth() + 1}.pdf`);
+		pdfMake.createPdf(pdfDefinition).open();
+
+		// .download(`ListaPrecios-${new Date().getFullYear()}-${new Date().getMonth() + 1}.pdf`);
 	};
 </script>
 
