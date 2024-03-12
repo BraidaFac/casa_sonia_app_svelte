@@ -15,7 +15,6 @@ export const createSearchStore = <T extends Record<PropertyKey, any>>(data: T[])
 		filtered: data,
 		search: '',
 		rubro: '',
-		descripcion: '',
 		marca: ''
 	});
 
@@ -35,7 +34,7 @@ export const searchHandler = <T extends Record<PropertyKey, any>>(store: SearchS
 
 		store.filtered = store.data.filter((item) => {
 			return (
-				item.DESCRIPCIONMARCA.toLowerCase().includes(searchBrand) &&
+				item.marca.descripcion.toLowerCase().includes(searchBrand) &&
 				item.searchTerms.toLowerCase().includes(searchCat) &&
 				item.searchTerms.toLowerCase().includes(searchTerm) &&
 				item.searchTerms.toLowerCase().includes(searchDescription)

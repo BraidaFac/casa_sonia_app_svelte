@@ -3,6 +3,7 @@ import type { PageServerLoad } from './$types';
 import { ENDPOINT_API } from '$env/static/private';
 import { fetchWithPagination } from '$lib/utils/pagination.utils';
 import { articleStore } from '$lib/stores/articles.store';
+import type { Article } from '$lib/utils/types.utils';
 
 export const load: PageServerLoad = async ({ locals, fetch, cookies }) => {
 	const session = await locals.auth.validate();
@@ -21,27 +22,26 @@ export const load: PageServerLoad = async ({ locals, fetch, cookies }) => {
 		throw error(500, 'Error API');
 	}
 	const { data: grupo_super_rubros } = await resonse_grupo_super_rubro.json();
-	let articulos;
+	let articulos: Article[];
 	articleStore.subscribe((value) => (articulos = value));
+	if (articulos && articulos.length > 0) return { grupo_super_rubros, articulos, setear: false };
+	articulos = await fetchWithPagination('articulos', 1000, token);
 
-	if (articulos && articulos.length > 0) return { grupo_super_rubros, articulos };
-	articulos = (await fetchWithPagination('listadoarticulos', 100, token)).data;
-	articleStore.set(orderProducts(articulos));
-	return { grupo_super_rubros, articulos: orderProducts(articulos) };
+	return { grupo_super_rubros, articulos: orderProducts(articulos), setear: true };
 };
 
 function orderProducts(products) {
 	products.sort(function (a, b) {
-		if (a.DESCRIPCIONMARCA > b.DESCRIPCIONMARCA) {
+		if (a.marca.descripcion > b.marca.descripcion) {
 			return 1;
 		}
-		if (a.DESCRIPCIONMARCA < b.DESCRIPCIONMARCA) {
+		if (a.marca.descripcion < b.marca.descripcion) {
 			return -1;
 		}
-		if (a.DESCRIPCION > b.DESCRIPCION) {
+		if (a.descripcion > b.descripcion) {
 			return 1;
 		}
-		if (a.DESCRIPCION < b.DESCRIPCION) {
+		if (a.descripcion < b.descripcion) {
 			return -1;
 		}
 		return 0;

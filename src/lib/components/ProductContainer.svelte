@@ -1,15 +1,13 @@
 <script lang="ts">
 	import { createSearchStore, searchHandler } from '$lib/stores/filter';
+	import type { Article } from '$lib/utils/types.utils';
 	import { onDestroy } from 'svelte';
-	export let articulos;
+	export let articulos: Article[];
 	let filter = '';
 	//filter
-	const searchProducts = articulos.map((product) => ({
-		...product,
-		searchTerms: `${product.DESCRIPCIONMARCA} ${product.DESCRIPCION} ${product.DESCRIPCIONRUBRO}`
-	}));
+	
 
-	const searchStore = createSearchStore(searchProducts);
+	const searchStore = createSearchStore(articulos);
 
 	const unsubscribe = searchStore.subscribe((model: any) => searchHandler(model));
 
@@ -40,18 +38,21 @@
 		<table class="table table-hover md:table-fixed">
 			<thead>
 				<tr>
+					<th>Codigo</th>
 					<th>Descripcion</th>
 					<th>Marca</th>
 					<th>Rubro</th>
+					<th>Precio</th>
 				</tr>
 			</thead>
 			<tbody>
-				{#each $searchStore.filtered as prod (prod.CODIGOARTICULO)}
+				{#each $searchStore.filtered as prod (prod.codigoarticulo)}
 					<tr>
-						<td>{prod.DESCRIPCION}</td>
-						<td>{prod.DESCRIPCIONMARCA}</td>
-						<td>{prod.DESCRIPCIONRUBRO}</td>
-						<td>{prod.PRECIOVENTA}</td>
+						<td>{prod.codigoparticular}</td>
+						<td>{prod.descripcion}</td>
+						<td>{prod.marca.descripcion}</td>
+						<td>{prod.rubro.descripcion}</td>
+						<td>${prod.precioventa1.toFixed(0)}</td>
 					</tr>
 				{/each}
 			</tbody>
