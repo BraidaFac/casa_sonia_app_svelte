@@ -1,4 +1,4 @@
-import { redirect } from '@sveltejs/kit';
+/* import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { prismaClient } from '$lib/server/prisma';
 
@@ -17,7 +17,7 @@ export const actions: Actions = {
 			name: string;
             img_src: string;
 		};
-		try {
+		try { 
 			await prismaClient.groupCategory.create({ data: { name } });
 		} catch (err) {
 			return JSON.stringify(err);
@@ -40,4 +40,4 @@ export const actions: Actions = {
             };
 		}
 	}
-};
+}; */

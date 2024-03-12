@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import type { PageData } from './$types';
 	export let data: PageData;
 	import { createSearchStore, searchHandler } from '$lib/stores/filter';
@@ -71,7 +71,7 @@
 </div>
 
 <div class="table-container md:p-4 p-2">
-	<!-- Native Table Element -->
+	<!-- Native Table Element 
 	{#if $searchStore.filtered.length === 0}
 		<p class="text-xl text-center mt-3">No hay productos</p>
 	{:else}
@@ -132,3 +132,4 @@
 		}
 	}
 </style>
+ -->

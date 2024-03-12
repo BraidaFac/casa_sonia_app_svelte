@@ -1,4 +1,4 @@
-import { redirect } from '@sveltejs/kit';
+/* import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { prismaClient } from '$lib/server/prisma';
 
@@ -41,4 +41,4 @@ export const actions: Actions = {
 			};
 		}
 	}
-};
+}; */

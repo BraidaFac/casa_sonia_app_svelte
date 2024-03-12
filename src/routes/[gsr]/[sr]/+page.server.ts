@@ -1,4 +1,4 @@
-import { error } from '@sveltejs/kit';
+/* import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 import { prismaClient } from '$lib/server/prisma';
@@ -80,3 +80,4 @@ function orderBrandes(brandes: any[]) {
 
 	return brandes;
 }
+ */

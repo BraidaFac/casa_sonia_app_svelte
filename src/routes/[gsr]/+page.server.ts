@@ -1,4 +1,4 @@
-import { error } from '@sveltejs/kit';
+/* import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 //import { prismaClient } from '$lib/server/prisma';
 //import { PrismaClient } from '@prisma/client';
@@ -35,4 +35,4 @@ function orderSuperCategory(super_categories: any[]){
 			return 0;
 		  })
 		
-		return super_categories;}
+		return super_categories;} */

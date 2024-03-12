@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import type { GroupCategory } from '@prisma/client';
@@ -33,4 +33,4 @@
 		<input  class="input"type="text" placeholder="Imagen" value={group_category?.img_src ?? ""} name="src_img" id="url_img" />
 		<button class="btn variant-filled-surface w-40" type="submit">Editar</button>
 	</form>
-</div>
+</div> -->

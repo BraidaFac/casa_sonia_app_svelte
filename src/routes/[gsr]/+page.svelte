@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import type { PageData } from './$types';
 	export let data: PageData;
 	const { super_categories } = data;
@@ -7,7 +7,7 @@
 
 
 <div class="table-container p-2">
-	<!-- Native Table Element -->
+	<!-- Native Table Element 
 	<table class="table table-hover">
 		<thead>
 			<tr>
@@ -23,7 +23,4 @@
 			{/each}
 		</tbody>
 	</table>
-</div>
-
-
-
+</div>-->

@@ -6,9 +6,9 @@ import { ZodError } from 'zod';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.auth.validate();
-	/* 	if (!session || session?.user.rol !== 'ADMIN') {
+	if (!session || session?.user.rol !== 'ADMIN') {
 		throw redirect(302, '/');
-	} */
+	}
 };
 
 export const actions: Actions = {

@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { enhance } from "$app/forms";
     import type { PageData } from './$types';
     export let data: PageData;
@@ -40,4 +40,4 @@ $: group_categories = data.group_categories;
 		</tbody>
 	</table>
 </div>
-</div>
+</div> -->
