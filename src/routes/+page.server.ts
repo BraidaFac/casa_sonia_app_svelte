@@ -1,37 +1,47 @@
-import { redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-//import { PrismaClient } from '@prisma/client';
-import { prismaClient } from '$lib/server/prisma';
+import { ENDPOINT_API } from '$env/static/private';
+import { fetchWithPagination } from '$lib/utils/pagination.utils';
+import { articleStore } from '$lib/stores/articles.store';
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals, fetch, cookies }) => {
 	const session = await locals.auth.validate();
-	if (!session) {
+	const token = cookies.get('Authorization');
+	if (!session || !token) {
 		throw redirect(301, '/login');
 	}
-
-	const groups_category = await prismaClient.groupCategory.findMany();
-	const products = await prismaClient.product.findMany({
-		include: {
-			brand: true,
-			category: true
+	const resonse_grupo_super_rubro = await fetch(`${ENDPOINT_API}/gruposuperrubros?limit=200`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `${token}`
 		}
 	});
+	if (resonse_grupo_super_rubro.status !== 200) {
+		throw error(500, 'Error API');
+	}
+	const { data: grupo_super_rubros } = await resonse_grupo_super_rubro.json();
+	let articulos;
+	articleStore.subscribe((value) => (articulos = value));
 
-	return { groups_category, products: orderProducts(products) };
+	if (articulos && articulos.length > 0) return { grupo_super_rubros, articulos };
+	articulos = (await fetchWithPagination('listadoarticulos', 100, token)).data;
+	articleStore.set(orderProducts(articulos));
+	return { grupo_super_rubros, articulos: orderProducts(articulos) };
 };
 
-function orderProducts(products: any[]) {
+function orderProducts(products) {
 	products.sort(function (a, b) {
-		if (a.brand.name > b.brand.name) {
+		if (a.DESCRIPCIONMARCA > b.DESCRIPCIONMARCA) {
 			return 1;
 		}
-		if (a.brand.name < b.brand.name) {
+		if (a.DESCRIPCIONMARCA < b.DESCRIPCIONMARCA) {
 			return -1;
 		}
-		if (a.description > b.description) {
+		if (a.DESCRIPCION > b.DESCRIPCION) {
 			return 1;
 		}
-		if (a.description < b.description) {
+		if (a.DESCRIPCION < b.DESCRIPCION) {
 			return -1;
 		}
 		return 0;

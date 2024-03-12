@@ -4,8 +4,8 @@
 	import ProductContainer from '$lib/components/ProductContainer.svelte';
 	import type { PageData } from './$types';
 	export let data: PageData;
-	const { groups_category, products } = data;
+	const { grupo_super_rubros, articulos } = data;
 </script>
 
-<CardContainer card_data={groups_category} />
-<ProductContainer {products} />
+<CardContainer card_data={grupo_super_rubros} />
+<ProductContainer {articulos} />

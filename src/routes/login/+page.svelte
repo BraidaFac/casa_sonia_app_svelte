@@ -20,8 +20,8 @@
 					class="flex flex-col md:w-96 gap-1 items-center"
 					use:enhance={() => {
 						loading = true;
-						
-						return ({ update ,result}) => {	
+
+						return ({ update, result }) => {
 							update();
 							setTimeout(() => {
 								loading = false;
@@ -47,16 +47,20 @@
 						name="password"
 					/>
 					{#if form?.message}
-						<span class="error">Credenciales incorrectas</span>
+						<span class="error">{form?.message}</span>
 					{/if}
 					<button type="submit" class="btn variant-outline w-24">Ingresar</button>
 				</form>
 			</div>
 		{:else}
-		<ProgressRadial value={undefined} class="self-center" stroke={20} meter="stroke-tertiary-500" track="stroke-tertiary-500/30"  />
-
+			<ProgressRadial
+				value={undefined}
+				class="self-center"
+				stroke={20}
+				meter="stroke-tertiary-500"
+				track="stroke-tertiary-500/30"
+			/>
 		{/if}
-		
 	</div>
 </div>
 

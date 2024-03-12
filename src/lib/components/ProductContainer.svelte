@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { createSearchStore, searchHandler } from '$lib/stores/filter';
 	import { onDestroy } from 'svelte';
-	export let products;
+	export let articulos;
 	let filter = '';
 	//filter
-	const searchProducts = products.map((product) => ({
+	const searchProducts = articulos.map((product) => ({
 		...product,
-		searchTerms: `${product.brand.name} ${product.description} ${product.category.name}`
+		searchTerms: `${product.DESCRIPCIONMARCA} ${product.DESCRIPCION} ${product.DESCRIPCIONRUBRO}`
 	}));
+
 	const searchStore = createSearchStore(searchProducts);
 
 	const unsubscribe = searchStore.subscribe((model: any) => searchHandler(model));
@@ -21,11 +22,13 @@
 	}
 
 	$: {
-		if (filter.length > 3) {
+		if (filter.length > 1) {
 			$searchStore.search = filter;
 		} else {
 			$searchStore.search = undefined;
 		}
+	}
+	$: {
 	}
 </script>
 
@@ -38,17 +41,17 @@
 			<thead>
 				<tr>
 					<th>Descripcion</th>
-					<th>Precio</th>
-					<th>Talles </th><th>Rubro</th>
+					<th>Marca</th>
+					<th>Rubro</th>
 				</tr>
 			</thead>
 			<tbody>
-				{#each $searchStore.filtered as prod (prod.id)}
+				{#each $searchStore.filtered as prod (prod.CODIGOARTICULO)}
 					<tr>
-						<td>{prod.description}</td>
-						<td>${addThousandSeparator(prod.price)}</td>
-						<td>{prod.size}</td>
-						<td>{prod.category.name}</td>
+						<td>{prod.DESCRIPCION}</td>
+						<td>{prod.DESCRIPCIONMARCA}</td>
+						<td>{prod.DESCRIPCIONRUBRO}</td>
+						<td>{prod.PRECIOVENTA}</td>
 					</tr>
 				{/each}
 			</tbody>
