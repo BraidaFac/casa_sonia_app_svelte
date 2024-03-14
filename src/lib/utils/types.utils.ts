@@ -3,6 +3,7 @@ export type Article = {
 	descripcion: string;
 	codigoparticular: string;
 	precioventa1: number;
+	preciocompra: number;
 	activo: boolean;
 	marca: {
 		codigomarca: string;
@@ -14,4 +15,3 @@ export type Article = {
 		codigosuperrubro: string;
 	};
 };
-

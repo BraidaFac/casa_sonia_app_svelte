@@ -3,11 +3,11 @@ import { LuciaError } from 'lucia';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { API_PASSWORD, API_DEVICE, API_USER, ENDPOINT_API } from '$env/static/private';
-console.log(API_DEVICE);
 
 export const load: PageServerLoad = (async ({ locals }) => {
 	const session = await locals.auth.validate();
-	if (session) {
+	const token = locals.token;
+	if (session && token) {
 		throw redirect(302, '/');
 	}
 }) satisfies PageServerLoad;
@@ -34,25 +34,20 @@ export const actions: Actions = {
 				})
 			});
 			if (response.status !== 200) {
-				console.log(await response.json());
 				throw new Error();
 			}
 			const token = (await response.json()).token;
 			cookies.set('Authorization', `Baerer ${token}`, { path: '/' });
+			locals.token = token;
 			locals.auth.setSession(session);
-
-			throw redirect(304, '/');
 		} catch (err) {
+			console.log('Error:', err);
 			if (err instanceof LuciaError) {
-				console.log(err);
-
 				return {
 					user: username,
 					message: 'Credenciales incorrectas'
 				};
 			} else {
-				console.log(err);
-
 				return {
 					user: username,
 					message: 'Error API'

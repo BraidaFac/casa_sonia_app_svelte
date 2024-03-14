@@ -43,6 +43,7 @@
 					<th>Marca</th>
 					<th>Rubro</th>
 					<th>Precio</th>
+					
 				</tr>
 			</thead>
 			<tbody>
@@ -52,7 +53,7 @@
 						<td>{prod.descripcion}</td>
 						<td>{prod.marca.descripcion}</td>
 						<td>{prod.rubro.descripcion}</td>
-						<td>${prod.precioventa1.toFixed(0)}</td>
+						<td>${addThousandSeparator(+(prod.precioventa1).toFixed(0))}</td>
 					</tr>
 				{/each}
 			</tbody>

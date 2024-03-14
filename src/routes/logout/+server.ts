@@ -8,6 +8,9 @@ export const POST = async ({ locals, cookies }) => {
 	}
 	await auth.invalidateSession(session.sessionId);
 	locals.auth.setSession(null);
-	cookies.delete('Authorization');
+	locals.token = null;
+	cookies.delete('Authorization', {
+		path: '/'
+	});
 	throw redirect(302, '/login');
 };

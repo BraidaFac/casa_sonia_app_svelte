@@ -1,21 +1,35 @@
 <script lang="ts">
-	import BurgerBar from '$lib/components/BurgerBar.svelte';
-	import CardContainer from '$lib/components/CardContainer.svelte';
 	import ProductContainer from '$lib/components/ProductContainer.svelte';
 	import type { PageData } from './$types';
 	export let data: PageData;
 	import { articleStore } from '$lib/stores/articles.store';
-	import { browser } from '$app/environment';
-	import {Html5QrcodeScanner} from 'html5-qrcode';
 	import { onMount } from 'svelte';
-	import {loadScript} from '$lib/index';
+	import { fetchWithPagination } from '$lib/utils/pagination.utils';
+	import type { Article } from '$lib/utils/types.utils';
+	let { grupo_super_rubros ,token, articulos} = data;
 
-	const { grupo_super_rubros, articulos,setear } = data;
 
-	if(setear){
-		articleStore.set(articulos);
+
+	onMount(async () => {
+	if (articulos && articulos.length === 0){
+		articulos = await fetchWithPagination('articulos', 1000, token);
+		//articleStore.set(articulos);
+		const res=  await fetch('/api',{
+			method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        articulos
+      })
+		})
 	}
+})
 </script>
 
 <!-- <CardContainer card_data={grupo_super_rubros} /> -->
-<ProductContainer {articulos} />
+{#if articulos && articulos.length>0}
+	<ProductContainer {articulos} />
+{:else}
+	<div class="flex justify-center"><p class="text-3xl text-gray-400">Cargando articulos</p></div>
+{/if}

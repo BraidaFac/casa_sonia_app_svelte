@@ -11,6 +11,7 @@ export const auth = lucia({
 		session: 'authSession',
 		key: 'authKey'
 	}),
+	sessionExpiresIn: { activePeriod: 60 * 60 * 24 * 1000, idlePeriod: 60 * 60 * 24 * 1000 },
 	env: dev ? 'DEV' : 'PROD',
 	middleware: sveltekit(),
 	getUserAttributes: (data) => ({
