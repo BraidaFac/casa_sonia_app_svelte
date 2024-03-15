@@ -8,7 +8,6 @@ export const POST = async ({ locals, cookies }) => {
 	}
 	await auth.invalidateSession(session.sessionId);
 	locals.auth.setSession(null);
-	locals.token = null;
 	cookies.delete('Authorization', {
 		path: '/'
 	});

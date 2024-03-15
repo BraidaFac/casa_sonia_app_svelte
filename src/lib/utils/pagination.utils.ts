@@ -89,9 +89,7 @@ export async function fetchWithPagination(
 
 			const data_article = await response_article.data.data.preciolista1;
 			sort_articles[i].precioventa1 = data_article;
-			console.log(sort_articles[i]);
 		} catch (error) {
-			console.log(error);
 			sort_articles[i].precioventa1 = 0;
 		}
 	}

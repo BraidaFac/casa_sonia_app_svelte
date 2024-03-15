@@ -1,8 +1,30 @@
 <script lang="ts">
-	import { Avatar } from "@skeletonlabs/skeleton";
+	import { goto, invalidate } from "$app/navigation";
+	import { Avatar, ProgressRadial } from "@skeletonlabs/skeleton";
+
 	export let user: any;
 	$: action_flag = false;
-	
+	let loading= false;
+	async function refreshApi(){
+		action_flag = !action_flag;
+		loading=true;
+		const res=  await fetch('/api/refreshApi',{
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+		})
+		loading=false;
+		if(res.status === 200){
+			alert('Se actualizo correctamente')
+			invalidate('app:main');
+			window.location.reload();
+		}
+		else {	
+			alert('No se actualizo correctamente. Intente nuevamente')
+		}
+	}
+
 </script>
 <div class="burger relative float-right">
 	{#if user.rol ==="ADMIN"}
@@ -20,7 +42,7 @@
 		  <div class="py-1" role="none">
 			<a href="/admin/excel" on:click={() => action_flag = !action_flag} class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">Excel</a>
 			<a href="/admin/pdf" on:click={() => action_flag = !action_flag} class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">PDF</a>
-			
+			<a href="/" on:click|preventDefault={refreshApi} class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">Actualizar datos</a>
 			<form method="POST" action="/logout"role="none">
 			  <button type="submit" class="text-gray-700 block w-full px-4 py-2 text-left text-sm" role="menuitem" tabindex="-1" id="menu-item-3">Sign out</button>
 			</form>
@@ -36,4 +58,14 @@
 	</form>
 	{/if}
 </div>
-
+ 
+{#if loading}
+<div class="z-40 absolute w-full top-1/3"><ProgressRadial
+				value={undefined}
+				class="mx-auto"
+				stroke={20}
+				meter="stroke-tertiary-500"
+				track="stroke-tertiary-500/30"
+			/></div>
+<div class="w-full h-full backdrop-blur-sm absolute"></div>
+{/if}

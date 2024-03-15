@@ -5,28 +5,28 @@ import { redisClientInit } from '$lib/utils/redis';
 import type { Article } from '$lib/utils/types.utils';
 
 export const ssr = false;
-export const load: PageServerLoad = async ({ locals, fetch, cookies }) => {
+export const load: PageServerLoad = async ({ locals, cookies, depends }) => {
+	depends('app:main');
+
 	const session = await locals.auth.validate();
 	const token = cookies.get('Authorization');
 	if (!session || !token) {
 		throw redirect(301, '/login');
 	}
-	const resonse_grupo_super_rubro = await fetch(`${ENDPOINT_API}/gruposuperrubros?limit=200`, {
+	const validateToken = await fetch(ENDPOINT_API + '/auth/me', {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
 			Authorization: `${token}`
 		}
 	});
-	if (resonse_grupo_super_rubro.status !== 200) {
-		console.log('Error fetching grupo_super_rubros:', resonse_grupo_super_rubro);
 
-		throw error(500, 'Error API');
+	if (validateToken.status !== 200) {
+		locals.auth.setSession(null);
+		throw redirect(301, '/login');
 	}
-	const { data: grupo_super_rubros } = await resonse_grupo_super_rubro.json();
-
 	const client = await redisClientInit();
 	const articulos: Article[] = JSON.parse(await client.get('articulos'));
 
-	return { grupo_super_rubros, token, articulos };
+	return { token, articulos };
 };

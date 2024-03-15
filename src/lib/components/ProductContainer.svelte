@@ -28,6 +28,10 @@
 	}
 	$: {
 	}
+
+	function truncarACentena(numero) {
+    return Math.round(numero / 100) * 100;
+}
 </script>
 
 <div class="md:w-1/2 md:mx-auto px-3">
@@ -41,7 +45,6 @@
 					<th>Codigo</th>
 					<th>Descripcion</th>
 					<th>Marca</th>
-					<th>Rubro</th>
 					<th>Precio</th>
 					
 				</tr>
@@ -52,8 +55,7 @@
 						<td>{prod.codigoparticular}</td>
 						<td>{prod.descripcion}</td>
 						<td>{prod.marca.descripcion}</td>
-						<td>{prod.rubro.descripcion}</td>
-						<td>${addThousandSeparator(+(prod.precioventa1).toFixed(0))}</td>
+						<td>${addThousandSeparator(truncarACentena(+(prod.precioventa1).toFixed(0)))}</td>
 					</tr>
 				{/each}
 			</tbody>

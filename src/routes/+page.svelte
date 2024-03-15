@@ -6,7 +6,7 @@
 	import { onMount } from 'svelte';
 	import { fetchWithPagination } from '$lib/utils/pagination.utils';
 	import type { Article } from '$lib/utils/types.utils';
-	let { grupo_super_rubros ,token, articulos} = data;
+	let {  token, articulos} = data;
 
 
 
@@ -23,6 +23,12 @@
         articulos
       })
 		})
+		if(res.status === 200){
+
+		}
+		else {	
+			alert('No se cargaron los articulos. Intente nuevamente')
+		}
 	}
 })
 </script>

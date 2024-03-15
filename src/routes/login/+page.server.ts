@@ -4,9 +4,9 @@ import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { API_PASSWORD, API_DEVICE, API_USER, ENDPOINT_API } from '$env/static/private';
 
-export const load: PageServerLoad = (async ({ locals }) => {
+export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	const session = await locals.auth.validate();
-	const token = locals.token;
+	const token = cookies.get('Authorization');
 	if (session && token) {
 		throw redirect(302, '/');
 	}
@@ -38,8 +38,8 @@ export const actions: Actions = {
 			}
 			const token = (await response.json()).token;
 			cookies.set('Authorization', `Baerer ${token}`, { path: '/' });
-			locals.token = token;
 			locals.auth.setSession(session);
+			throw redirect(302, '/');
 		} catch (err) {
 			console.log('Error:', err);
 			if (err instanceof LuciaError) {
