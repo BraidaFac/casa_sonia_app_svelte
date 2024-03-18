@@ -27,6 +27,7 @@ export const load: PageServerLoad = async ({ locals, cookies, depends }) => {
 	}
 	const client = await redisClientInit();
 	const articulos: Article[] = JSON.parse(await client.get('articulos'));
+	client.disconnect();
 
 	return { token, articulos };
 };
