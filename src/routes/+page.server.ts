@@ -26,7 +26,12 @@ export const load: PageServerLoad = async ({ locals, cookies, depends }) => {
 		throw redirect(301, '/login');
 	}
 	const client = await redisClientInit();
-	const articulos: Article[] = JSON.parse(await client.get('articulos'));
-
-	return { token, articulos };
+	try {
+		const articulos: Article[] = JSON.parse(await client.get('articulos'));
+		return { token, articulos };
+	} catch (err) {
+		throw error(500, 'Error al obtener los articulos');
+	} finally {
+		client.disconnect();
+	}
 };
