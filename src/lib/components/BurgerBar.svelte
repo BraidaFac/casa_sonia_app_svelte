@@ -21,7 +21,7 @@
 			window.location.reload();
 		}
 		else {
-			alert(await res.json())
+			alert(JSON.stringify(await res.json()));
 			alert('No se actualizo correctamente. Intente nuevamente')
 		}
 	}
