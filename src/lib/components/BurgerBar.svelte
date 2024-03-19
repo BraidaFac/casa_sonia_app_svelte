@@ -1,18 +1,26 @@
 <script lang="ts">
 	import { goto, invalidate } from "$app/navigation";
+	import { fetchWithPagination } from "$lib/utils/pagination.utils";
 	import { Avatar, ProgressRadial } from "@skeletonlabs/skeleton";
+	import {page} from '$app/stores'
 
 	export let user: any;
 	$: action_flag = false;
 	let loading= false;
 	async function refreshApi(){
+		const token = $page.data.token;
 		action_flag = !action_flag;
 		loading=true;
-		const res=  await fetch('/api/refreshApi',{
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json'
-			},
+		const articulos = await fetchWithPagination('articulos', 1000, token);
+		//articleStore.set(articulos);
+		const res=  await fetch('/api',{
+			method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        articulos
+      })
 		})
 		loading=false;
 		if(res.status === 200){

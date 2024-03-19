@@ -1,4 +1,4 @@
-import { error, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { ENDPOINT_API } from '$env/static/private';
 import { redisClientInit } from '$lib/utils/redis';

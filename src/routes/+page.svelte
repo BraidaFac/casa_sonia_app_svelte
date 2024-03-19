@@ -8,10 +8,8 @@
 	import type { Article } from '$lib/utils/types.utils';
 	let {  token, articulos} = data;
 
-
-
 	onMount(async () => {
-	if (articulos && articulos.length === 0){
+	if (!articulos){
 		articulos = await fetchWithPagination('articulos', 1000, token);
 		//articleStore.set(articulos);
 		const res=  await fetch('/api',{
@@ -23,12 +21,10 @@
         articulos
       })
 		})
-		if(res.status === 200){
-
-		}
-		else {	
+		if(res.status !== 200){
 			alert('No se cargaron los articulos. Intente nuevamente')
-		}
+		}	
+		
 	}
 })
 </script>

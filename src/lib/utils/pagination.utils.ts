@@ -1,5 +1,5 @@
 import type { Article } from './types.utils';
-import axios, { isCancel, AxiosError } from 'axios';
+import axios from 'axios';
 const ENDPOINT_API = 'https://casasonia.procomisp.com.ar/v5';
 export async function fetchWithPagination(
 	path: string,
@@ -71,7 +71,9 @@ export async function fetchWithPagination(
 			item.marca.descripcion !== 'CASA SONIA LETRAS' &&
 			item.activo
 	);
+
 	const sort_articles = orderProducts(active_article);
+
 	const instance = axios.create({
 		baseURL: `${ENDPOINT_API}/articulos`,
 		timeout: 5000,
