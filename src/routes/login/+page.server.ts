@@ -21,7 +21,6 @@ export const actions: Actions = {
 		try {
 			const user = await auth.useKey('username', username.toLowerCase(), password);
 			const session = await auth.createSession({ userId: user.userId, attributes: {} });
-
 			const response = await fetch(`${ENDPOINT_API}/auth/login`, {
 				method: 'POST',
 				headers: {
@@ -41,7 +40,6 @@ export const actions: Actions = {
 			locals.auth.setSession(session);
 			throw redirect(302, '/');
 		} catch (err) {
-			console.log('Error:', err);
 			if (err instanceof LuciaError) {
 				return {
 					user: username,
