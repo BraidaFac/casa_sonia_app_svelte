@@ -1,4 +1,4 @@
-import { fetchWithPagination } from '$lib/utils/pagination.utils';
+import { fetchWithPagination } from '../../src/lib/utils/pagination.utils';
 import { redisClientInit } from './../../src/lib/utils/redis';
 import type { Config } from '@netlify/functions';
 

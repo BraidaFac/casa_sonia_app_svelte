@@ -20,7 +20,8 @@
 			invalidate('app:main');
 			window.location.reload();
 		}
-		else {	
+		else {
+			alert(await res.json())
 			alert('No se actualizo correctamente. Intente nuevamente')
 		}
 	}

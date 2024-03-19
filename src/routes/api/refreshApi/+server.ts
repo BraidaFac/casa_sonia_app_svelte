@@ -18,7 +18,7 @@ export const GET: RequestHandler = async ({ cookies, locals }) => {
 		await connection.set('articulos', JSON.stringify(articulos));
 		return new Response('success', { status: 200 });
 	} catch (err) {
-		return new Response('Error', { status: 500 });
+		return new Response(JSON.stringify(err), { status: 500 });
 	} finally {
 		await connection.disconnect();
 	}
