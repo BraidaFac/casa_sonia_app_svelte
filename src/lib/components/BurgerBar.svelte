@@ -1,16 +1,23 @@
 <script lang="ts">
 	import { goto, invalidate } from "$app/navigation";
 	import { fetchWithPagination } from "$lib/utils/pagination.utils";
-	import { Avatar, ProgressRadial } from "@skeletonlabs/skeleton";
+	import { Avatar, ProgressRadial,ProgressBar } from "@skeletonlabs/skeleton";
 	import {page} from '$app/stores'
 
 	export let user: any;
 	$: action_flag = false;
 	let loading= false;
+	let loadingValue=0;
 	async function refreshApi(){
 		const token = $page.data.token;
 		action_flag = !action_flag;
 		loading=true;
+		const interval=setInterval(()=>{
+				loadingValue=loadingValue+1.6;
+			},1000);
+		setTimeout(()=>{
+		clearInterval(interval)},66000);
+	
 		const articulos = await fetchWithPagination('articulos', 1000, token);
 		//articleStore.set(articulos);
 		const res=  await fetch('/api',{
@@ -33,6 +40,8 @@
 			alert('No se actualizo correctamente. Intente nuevamente')
 		}
 	}
+
+	
 
 </script>
 <div class="burger relative float-right">
@@ -70,7 +79,7 @@
  
 {#if loading}
 <div class="z-40 absolute w-full top-1/3"><ProgressRadial
-				value={undefined}
+				value={loadingValue}
 				class="mx-auto"
 				stroke={20}
 				meter="stroke-tertiary-500"

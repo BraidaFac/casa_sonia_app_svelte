@@ -3,6 +3,7 @@
 	import type { Article } from '$lib/utils/types.utils';
 	import { onDestroy } from 'svelte';
 	export let articulos: Article[];
+	
 	let filter = '';
 	//filter
 	

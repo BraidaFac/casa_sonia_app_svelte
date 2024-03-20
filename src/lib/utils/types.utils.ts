@@ -14,4 +14,5 @@ export type Article = {
 		descripcion: string;
 		codigosuperrubro: string;
 	};
+	searchTerms?: string;
 };

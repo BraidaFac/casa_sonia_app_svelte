@@ -10,9 +10,11 @@ export const load: PageServerLoad = async ({ locals, cookies, depends }) => {
 
 	const session = await locals.auth.validate();
 	const token = cookies.get('Authorization');
+
 	if (!session || !token) {
 		throw redirect(301, '/login');
 	}
+
 	const validateToken = await fetch(ENDPOINT_API + '/auth/me', {
 		method: 'GET',
 		headers: {
@@ -20,14 +22,13 @@ export const load: PageServerLoad = async ({ locals, cookies, depends }) => {
 			Authorization: `${token}`
 		}
 	});
-
 	if (validateToken.status !== 200) {
+		cookies.delete('Authorization');
 		locals.auth.setSession(null);
 		throw redirect(301, '/login');
 	}
 	const client = await redisClientInit();
 	const articulos: Article[] = JSON.parse(await client.get('articulos'));
 	client.disconnect();
-
 	return { token, articulos };
 };
