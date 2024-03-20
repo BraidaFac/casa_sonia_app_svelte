@@ -5,8 +5,8 @@
 	export let articulos: Article[];
 	
 	let filter = '';
+	export let codeScan;
 	//filter
-	
 
 	const searchStore = createSearchStore(articulos);
 
@@ -28,11 +28,14 @@
 		}
 	}
 	$: {
+		if (codeScan) {
+			filter = codeScan;
+		}
 	}
 
 	function truncarACentena(numero) {
-    return Math.round(numero / 100) * 100;
-}
+		return Math.round(numero / 100) * 100;
+	}
 </script>
 
 <div class="md:w-1/2 md:mx-auto px-3">
@@ -47,7 +50,6 @@
 					<th>Descripcion</th>
 					<th>Marca</th>
 					<th>Precio</th>
-					
 				</tr>
 			</thead>
 			<tbody>
@@ -56,7 +58,7 @@
 						<td>{prod.codigoparticular}</td>
 						<td>{prod.descripcion}</td>
 						<td>{prod.marca.descripcion}</td>
-						<td>${addThousandSeparator(truncarACentena(+(prod.precioventa1).toFixed(0)))}</td>
+						<td>${addThousandSeparator(truncarACentena(+prod.precioventa1.toFixed(0)))}</td>
 					</tr>
 				{/each}
 			</tbody>

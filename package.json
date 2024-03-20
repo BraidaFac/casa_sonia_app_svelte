@@ -50,6 +50,9 @@
 		"lucia": "^2.7.4",
 		"pdfmake": "^0.2.8",
 		"redis": "^4.6.13",
+		"scanbot-web-sdk": "^4.0.1",
+		"scandit-web-datacapture-barcode": "^6.23.0-beta.2",
+		"scandit-web-datacapture-core": "^6.23.0-beta.2",
 		"zod": "^3.22.4"
 	}
 }
