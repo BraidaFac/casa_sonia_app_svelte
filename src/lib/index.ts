@@ -27,6 +27,7 @@ export async function initScanner() {
 	await camera.switchToDesiredState(SDCCore.FrameSourceState.Off);
 
 	const barcodeCapture = await SDCBarcode.BarcodeCapture.forContext(context, settings);
+
 	return {
 		view,
 		barcodeCapture,

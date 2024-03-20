@@ -128,7 +128,7 @@
 			}}>Scannear</button
 		>
 	{/if}
-	<div class="hidden h-80" id="data-capture-view"></div>
+	<div class="hidden"  id="data-capture-view"></div>
 </div>
 <audio bind:this={scannerSound} src="/beep.mp3"></audio>
 <p>{count}</p>
