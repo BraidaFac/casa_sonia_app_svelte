@@ -77,7 +77,7 @@
 	{/if}
 </div>
  
-{#if !loading}
+{#if loading}
 <div class="z-40 absolute w-full top-1/3 pl-6">
 <p class="text-4xl my-5  text-center animate-bounce">Cargando articulos</p><ProgressRadial
 				value={loadingValue}
