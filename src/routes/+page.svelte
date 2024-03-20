@@ -16,9 +16,9 @@
 	let result;
 	let camera;
 	let allresult;
-
+	let scannerSound;
+	let count = 0;
 	function reproducirSonido() {
-		var scannerSound = document.getElementById('scannerSound');
 		scannerSound.play();
 	}
 	onMount(async () => {
@@ -32,15 +32,16 @@
 		}
 		const listener = {
 			didScan: async (barcode, session) => {
+				count++;
+				document.getElementById('data-capture-view').classList.add('hidden');
 				const recognizedBarcodes = session.newlyRecognizedBarcodes;
+				reproducirSonido();
 				allresult = recognizedBarcodes;
 				result = recognizedBarcodes[0]._data.match(/^\w+/)[0];
-				reproducirSonido();
-				//await barcode.setEnabled(false);
-				// asynchronously turn off the camera as quickly as possible.
-				//await barcode.context.frameSource.switchToDesiredState(SDCCore.FrameSourceState.Off);
-				//showScanner = false;
-				//document.getElementById('data-capture-view').classList.add('hidden');
+				//asynchronously turn off the camera as quickly as possible.
+				await camera.switchToDesiredState(SDCCore.FrameSourceState.Standby);
+				await camera.switchToDesiredState(SDCCore.FrameSourceState.Off);
+				showScanner = false;
 			}
 		};
 		barcode.addListener(listener);
@@ -64,6 +65,8 @@
 	});
 
 	$: code = result ? result : null;
+
+	onDestroy(() => {});
 </script>
 
 <!-- <CardContainer card_data={grupo_super_rubros} /> -->
@@ -80,14 +83,15 @@
 		<button
 			class="btn variant-filled-success mb-3"
 			on:click={async () => {
-				showScanner = !showScanner;
 				document.getElementById('data-capture-view').classList.toggle('hidden');
+				showScanner = !showScanner;
 			}}>Dejar de scannear</button
 		>
 	{:else}
 		<button
 			class="btn variant-filled-warning mb-3"
 			on:click={async () => {
+				await camera.switchToDesiredState(SDCCore.FrameSourceState.On);
 				showScanner = !showScanner;
 				document.getElementById('data-capture-view').classList.toggle('hidden');
 			}}>Scannear</button
@@ -95,4 +99,5 @@
 	{/if}
 	<div class="hidden h-80" id="data-capture-view"></div>
 </div>
-<audio id="scannerSound" src="/beep.mp3" preload="auto"></audio>
+<audio bind:this={scannerSound} src="/beep.mp3"></audio>
+<p>{count}</p>
