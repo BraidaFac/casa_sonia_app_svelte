@@ -19,9 +19,7 @@
 	<svelte:fragment slot="default"><h1 class="text-xl md:text-4xl">Casa Sonia</h1></svelte:fragment>
 	
 	<svelte:fragment slot="trail">
-		{#if user}
 		<BurgerBar {user} />
-		{/if}
 	</svelte:fragment>
 </AppBar>
 

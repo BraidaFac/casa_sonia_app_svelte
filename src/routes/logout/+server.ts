@@ -11,5 +11,5 @@ export const POST = async ({ locals, cookies }) => {
 	cookies.delete('Authorization', {
 		path: '/'
 	});
-	throw redirect(302, '/login');
+	throw redirect(302, '/');
 };

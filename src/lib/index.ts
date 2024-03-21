@@ -28,6 +28,11 @@ export async function initScanner() {
 
 	const barcodeCapture = await SDCBarcode.BarcodeCapture.forContext(context, settings);
 
+	barcodeCapture.feedback.success = new SDCCore.Feedback(
+		SDCCore.Vibration.defaultVibration,
+		SDCCore.Sound.defaultSound
+	);
+
 	return {
 		view,
 		barcodeCapture,

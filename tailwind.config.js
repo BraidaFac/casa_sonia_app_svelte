@@ -1,6 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 import { skeleton } from '@skeletonlabs/tw-plugin';
 import forms from '@tailwindcss/forms';
+const { addDynamicIconSelectors } = require('@iconify/tailwind');
+
 import { join } from 'path';
 export default {
 	darkMode: 'class',
@@ -18,6 +20,7 @@ export default {
 				preset: [{ name: 'crimson', enhancements: true }]
 			}
 		}),
-		forms
+		forms,
+		addDynamicIconSelectors()
 	]
 };

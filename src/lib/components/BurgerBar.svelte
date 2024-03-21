@@ -5,6 +5,7 @@
 	import {page} from '$app/stores'
 
 	export let user: any;
+	
 	$: action_flag = false;
 	let loading= false;
 	let loadingValue=0;
@@ -45,7 +46,7 @@
 
 </script>
 <div class="burger relative float-right">
-	{#if user.rol ==="ADMIN"}
+	{#if user && user.rol ==="ADMIN"}
 	<div class="relative inline-block text-left">
 		<div>
 		  <button on:click={() => action_flag = !action_flag}
@@ -69,11 +70,7 @@
 		{/if}
 	  </div>
 	{:else}
-	<form method="post"> 
-		<button class="btn-icon	" type="submit" formaction="/logout">
-			<Avatar size="small"initials={user.username[0]} />
-		</button>
-	</form>
+	<a href="/login">Login</a>
 	{/if}
 </div>
  

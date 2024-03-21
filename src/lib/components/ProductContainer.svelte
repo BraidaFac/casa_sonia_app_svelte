@@ -4,8 +4,8 @@
 	import { onDestroy } from 'svelte';
 	export let articulos: Article[];
 	
-	let filter = '';
-	export let codeScan;
+	export let codeScan:string='';
+	let filter = codeScan
 	//filter
 
 	const searchStore = createSearchStore(articulos);
@@ -26,13 +26,10 @@
 		} else {
 			$searchStore.search = undefined;
 		}
+		
 	}
-	$: {
-		if (codeScan) {
-			filter = codeScan;
-		}
-	}
-
+	
+	
 	function truncarACentena(numero) {
 		return Math.round(numero / 100) * 100;
 	}
