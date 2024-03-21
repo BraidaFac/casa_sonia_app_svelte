@@ -90,6 +90,7 @@
 		<button
 			class="btn variant-filled-error mb-3 fixed bottom-0"
 			on:click={async () => {
+				await camera.switchToDesiredState(SDCCore.FrameSourceState.Off);
 				document.getElementById('data-capture-view').classList.toggle('hidden');
 				showScanner = !showScanner;
 			}}><span class="icon-[mdi--camera-outline]  text-4xl"></span>Dejar de scannear</button
