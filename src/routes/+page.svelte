@@ -2,10 +2,8 @@
 	import ProductContainer from '$lib/components/ProductContainer.svelte';
 	import type { PageData } from './$types';
 	export let data: PageData;
-	import { articleStore } from '$lib/stores/articles.store';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { fetchWithPagination } from '$lib/utils/pagination.utils';
-	import type { Article } from '$lib/utils/types.utils';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
 	let {  token, articulos} = data;
 	let loadingValue=0;

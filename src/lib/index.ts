@@ -15,11 +15,8 @@ export async function initScanner() {
 		moduleLoaders: [barcodeCaptureLoader()]
 	});
 	view.hideProgressBar();
-
 	const cameraSettings = SDCBarcode.BarcodeCapture.recommendedCameraSettings;
 	const camera = SDCCore.Camera.default;
-	console.log(camera);
-
 	if (camera) {
 		await camera.applySettings(cameraSettings);
 	} else return undefined;
