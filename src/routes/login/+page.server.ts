@@ -46,9 +46,11 @@ export const actions: Actions = {
 					message: 'Credenciales incorrectas'
 				};
 			} else {
+				console.log(err);
+
 				return {
 					user: username,
-					message: 'Error API'
+					message: JSON.stringify(err)
 				};
 			}
 		}
