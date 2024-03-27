@@ -3,9 +3,9 @@
 	import type { Article } from '$lib/utils/types.utils';
 	import { onDestroy } from 'svelte';
 	export let articulos: Article[];
-	
-	export let codeScan:string='';
-	let filter = codeScan
+
+	export let codeScan: string = '';
+	let filter = codeScan;
 	//filter
 
 	const searchStore = createSearchStore(articulos);
@@ -26,10 +26,8 @@
 		} else {
 			$searchStore.search = undefined;
 		}
-		
 	}
-	
-	
+
 	function truncarACentena(numero) {
 		return Math.round(numero / 100) * 100;
 	}
@@ -46,16 +44,20 @@
 					<th>Codigo</th>
 					<th>Descripcion</th>
 					<th>Marca</th>
-					<th>Precio</th>
+					<th>Precio Efectivo</th>
+					<th>Precio tarjeta</th>
+					<th>Talles</th>
 				</tr>
 			</thead>
 			<tbody>
-				{#each $searchStore.filtered as prod (prod.codigoarticulo)}
+				{#each $searchStore.filtered as prod}
 					<tr>
-						<td>{prod.codigoparticular}</td>
-						<td>{prod.descripcion}</td>
-						<td>{prod.marca.descripcion}</td>
-						<td>${addThousandSeparator(truncarACentena(+prod.precioventa1.toFixed(0)))}</td>
+						<td>{prod.CODIGO_PRODUCTO}</td>
+						<td>{prod.NOMBRE}</td>
+						<td>{prod.DESCRIPCION_MARCA}</td>
+						<td>${addThousandSeparator(truncarACentena(+prod.PRECIOEFECTIVO.toFixed(0)))}</td>
+						<td>${addThousandSeparator(truncarACentena(+prod.PRECIOVENTA.toFixed(0)))}</td>
+						<td>{prod.TALLES}</td>
 					</tr>
 				{/each}
 			</tbody>

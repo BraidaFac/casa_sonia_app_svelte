@@ -44,52 +44,5 @@ model AuthKey {
   @@map("auth_key")
 }
 
-model Product {
-  id String @id @map("_id")@default(auto()) @db.ObjectId
-  article String 
-  price Float
-  description String?
-  category_id  String @db.ObjectId
-  category Category @relation(references: [id], fields: [category_id], onDelete: Cascade)
-  brand_id String @db.ObjectId
-  brand Brand @relation(references: [id], fields: [brand_id], onDelete: Cascade)
-  size  String
-  @@unique([article, size], name: "unique_constraint")
-  @@map("products")
-}
-
-model Category{
-  id String @id @map("_id")  @default(auto()) @db.ObjectId
-  name String @unique
-  products Product[]
-  super_category_id String @db.ObjectId
-  supercategory SuperCategory @relation(references: [id], fields: [super_category_id], onDelete: Cascade)
-  @@map("categories")
-}
-model SuperCategory{
-  id String @id @map("_id")  @default(auto()) @db.ObjectId
-  name String @unique
-  categories Category[]
-  group_category_id String @db.ObjectId
-  group_category GroupCategory @relation(references: [id], fields: [group_category_id], onDelete: Cascade)
-  @@map("supercategories")
-}
-model GroupCategory{
-  id String @id @map("_id")  @default(auto()) @db.ObjectId
-  name String @unique
-  superCategories SuperCategory[]
-  @@map("groupcategories")
-
-}
-model Brand {
-  id String @id @map("_id") @default(auto()) @db.ObjectId
-  name String @unique
-  product Product[]
-  email String?
-  phone String?
-  url_img String?
-  
-  @@map("brands")
-}
 
 

@@ -1,18 +1,15 @@
 export type Article = {
-	codigoarticulo: string;
-	descripcion: string;
-	codigoparticular: string;
-	precioventa1: number;
-	preciocompra: number;
-	activo: boolean;
-	marca: {
-		codigomarca: string;
-		descripcion: string;
-	};
-	rubro: {
-		codigorubro: string;
-		descripcion: string;
-		codigosuperrubro: string;
-	};
+	ID_ARTICULO: string;
+	CODIGO_PRODUCTO: string;
+	NOMBRE: string;
+	DESCRIPCIONGRUPOSUPERRUBRO: string;
+	DESCRIPCIONSUPERRUBRO: string;
+	DESCRIPCIONRUBRO: string;
+	DESCRIPCION_MARCA: string;
+	TALLES: string;
+	STOCKTOTAL: number;
+	PRECIOVENTA: number;
+	ACTIVO: number;
 	searchTerms?: string;
+	PRECIOEFECTIVO?: number;
 };

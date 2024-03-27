@@ -6,75 +6,66 @@ export async function fetchWithPagination(
 	quantity: number,
 	token: string
 ): Promise<Article[]> {
-	const response_count = await fetch(`${ENDPOINT_API}/${path}`, {
+	const responses = await fetch(`${ENDPOINT_API}/${path}?limit=${100}&offset=${0}`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
 			Authorization: `${token}`
 		}
 	});
-	const { count } = await response_count.json();
-	const pages = Math.ceil(count / quantity);
-	const promises = [];
-	Array.from({ length: pages }).forEach((_, i: number) => {
-		promises.push(
-			fetch(`${ENDPOINT_API}/${path}?limit=${quantity}&offset=${i * quantity}`, {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `${token}`
-				}
-			})
-		);
-	});
-	const responses = await Promise.all(promises);
-	const data = await Promise.all(responses.map((response) => response.json()));
-	const mapped_data: Article[] = data.flatMap((item) => item.data as Article[]);
+	const data = (await responses.json()).data;
+
 	const articleAtributes = [
-		'codigoarticulo',
-		'descripcion',
-		'codigoparticular',
-		'precioventa1',
-		'preciocompra',
-		'activo',
-		'marca',
-		'rubro'
+		'ID_ARTICULO',
+		'CODIGO_PRODUCTO',
+		'NOMBRE',
+		'DESCRIPCIONGRUPOSUPERRUBRO',
+		'DESCRIPCIONSUPERRUBRO',
+		'DESCRIPCIONRUBRO',
+		'DESCRIPCION_MARCA',
+		'TALLES',
+		'STOCKTOTAL',
+		'PRECIOVENTA',
+		'ACTIVO'
 	];
-	const reduced_data = mapped_data.map((item) => {
+	const reduced_data = data.map((item) => {
 		return articleAtributes.reduce(
 			(obj: Article, key) => {
 				obj[key] = item[key];
 				return obj;
 			},
 			{
-				codigoarticulo: '',
-				descripcion: '',
-				codigoparticular: '',
-				precioventa1: 0,
-				preciocompra: 0,
-				activo: false,
-				marca: {
-					codigomarca: '',
-					descripcion: ''
-				},
-				rubro: {
-					codigorubro: '',
-					descripcion: '',
-					codigosuperrubro: ''
-				}
+				ID_ARTICULO: '',
+				CODIGO_PRODUCTO: '',
+				NOMBRE: '',
+				DESCRIPCIONGRUPOSUPERRUBRO: '',
+				DESCRIPCIONSUPERRUBRO: '',
+				DESCRIPCIONRUBRO: '',
+				DESCRIPCION_MARCA: '',
+				TALLES: '',
+				STOCKTOTAL: 0,
+				PRECIOVENTA: 0,
+				ACTIVO: 0
 			}
 		);
 	});
 	const active_article = reduced_data.filter(
 		(item) =>
-			item.rubro.descripcion !== 'Z ARTICULOS INACTIVOS' &&
-			item.marca.descripcion !== 'CASA SONIA LETRAS' &&
-			item.marca.descripcion !== 'ADMINISTRACION VARIOS' &&
-			item.activo
+			item.DESCRIPCIONRUBRO !== 'Z ARTICULOS INACTIVOS' &&
+			item.DESCRIPCION_MARCA !== 'CASA SONIA LETRAS' &&
+			item.DESCRIPCION_MARCA !== 'ADMINISTRACION VARIOS' &&
+			item.ACTIVO
 	);
 
-	const sort_articles = orderProducts(active_article);
-	const articles_worked = await addPrices(sort_articles, token);
+	const sort_articles = orderProducts(
+		active_article.map((item) => ({
+			...item,
+			searchTerms: `${item.DESCRIPCION_MARCA} ${item.DESCRIPCIONRUBRO} ${item.NOMBRE} ${item.CODIGO_PRODUCTO}`,
+			PRECIOEFECTIVO: item.PRECIOVENTA * 0.8,
+			TALLES: item.TALLES ? extractTalles(item.TALLES) : ''
+		}))
+	);
+	//const articles_worked = await addPrices(sort_articles, token);
 
 	/* sort_articles.forEach((article) => {
 		const price = prices.find((item) => item.codigoarticulo === article.codigoarticulo);
@@ -86,7 +77,7 @@ export async function fetchWithPagination(
 		article.searchTerm = `${article.marca.descripcion} ${article.rubro.descripcion} ${article.descripcion} ${article.codigoparticular}`;
 	});  */
 
-	return articles_worked;
+	return sort_articles;
 	//const mapped_data_articles: Article[] = data_articles.flatMap((item) => item.data as Article[]);
 	//console.log('mapped_data_articles', mapped_data_articles);
 
@@ -105,18 +96,23 @@ export async function fetchWithPagination(
 	//return sort_articles;
 }
 
+function extractTalles(talles: string) {
+	const talles_splited = talles.split('|');
+	return `${talles_splited[0]} | ${talles_splited[talles_splited.length - 1]}`;
+}
+
 function orderProducts(products) {
 	products.sort(function (a, b) {
-		if (a.marca.descripcion > b.marca.descripcion) {
+		if (a.DESCRIPCION_MARCA > b.DESCRIPCION_MARCA) {
 			return 1;
 		}
-		if (a.marca.descripcion < b.marca.descripcion) {
+		if (a.DESCRIPCION_MARCA < b.DESCRIPCION_MARCA) {
 			return -1;
 		}
-		if (a.descripcion > b.descripcion) {
+		if (a.NOMBRE > b.NOMBRE) {
 			return 1;
 		}
-		if (a.descripcion < b.descripcion) {
+		if (a.NOMBRE < b.NOMBRE) {
 			return -1;
 		}
 		return 0;
@@ -125,7 +121,7 @@ function orderProducts(products) {
 	return products;
 }
 
-async function addPrices(articles: Article[], token: string) {
+/* async function addPrices(articles: Article[], token: string) {
 	const instance = axios.create({
 		baseURL: `${ENDPOINT_API}/articulos/`,
 		timeout: 100000,
@@ -149,9 +145,9 @@ async function addPrices(articles: Article[], token: string) {
 					});
 				}
 			})
-		);
+		); */
 
-		const newPrices = responses
+/* 		const newPrices = responses
 			.filter((response) => response.status === 'fulfilled')
 			.flatMap((item) => item.value.data.data);
 
@@ -166,6 +162,5 @@ async function addPrices(articles: Article[], token: string) {
 		}
 		article.searchTerms = `${article.marca.descripcion} ${article.rubro.descripcion} ${article.descripcion} ${article.codigoparticular}`;
 	});
-	return articles;
-	//create an array wit promises for each article
-}
+	return articles; */
+//create an array wit promises for each article
