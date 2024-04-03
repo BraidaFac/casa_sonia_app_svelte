@@ -6,14 +6,14 @@ export async function fetchWithPagination(
 	quantity: number,
 	token: string
 ): Promise<Article[]> {
-	const responses = await fetch(`${ENDPOINT_API}/${path}?limit=${100}&offset=${0}`, {
+	const responses = await axios.get(`${ENDPOINT_API}/${path}`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
 			Authorization: `${token}`
 		}
 	});
-	const data = (await responses.json()).data;
+	const data = responses.data.data;
 
 	const articleAtributes = [
 		'ID_ARTICULO',
