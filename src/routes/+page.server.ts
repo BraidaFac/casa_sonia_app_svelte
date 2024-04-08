@@ -39,7 +39,7 @@ export const load = async ({ cookies, depends, fetch }) => {
 	let token = cookies.get('Authorization');
 
 	if (!token || !(await validateToken(token))) {
-		token = await login(fetch);
+		token = `Bearer ${await login(fetch)}`;
 		cookies.set('Authorization', `Bearer ${token}`, { path: '/' });
 	}
 	const client = await redisClientInit();
