@@ -21,7 +21,7 @@
 	}
 
 	$: {
-		if (filter.length > 1) {
+		if (filter.length > 0) {
 			$searchStore.search = filter;
 		} else {
 			$searchStore.search = undefined;
@@ -47,6 +47,7 @@
 					<th>Precio Efectivo</th>
 					<th>Precio tarjeta</th>
 					<th>Talles</th>
+					<th>Rubro</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -58,6 +59,7 @@
 						<td>${addThousandSeparator(truncarACentena(+prod.PRECIOEFECTIVO.toFixed(0)))}</td>
 						<td>${addThousandSeparator(truncarACentena(+prod.PRECIOVENTA.toFixed(0)))}</td>
 						<td>{prod.TALLES}</td>
+						<td>{prod.DESCRIPCIONRUBRO}</td>
 					</tr>
 				{/each}
 			</tbody>
@@ -70,7 +72,8 @@
 		width: 100%;
 	}
 
-	td:nth-child(2) {
+	td:nth-child(4),
+	td:nth-child(5) {
 		font-weight: bold;
 	}
 

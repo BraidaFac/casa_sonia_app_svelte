@@ -60,7 +60,7 @@ export async function fetchWithPagination(
 	const sort_articles = orderProducts(
 		active_article.map((item) => ({
 			...item,
-			searchTerms: `${item.DESCRIPCION_MARCA} ${item.DESCRIPCIONRUBRO} ${item.NOMBRE} ${item.CODIGO_PRODUCTO}`,
+			searchTerms: `${item.DESCRIPCION_MARCA} ${item.DESCRIPCIONRUBRO} ${item.NOMBRE} ${item.CODIGO_PRODUCTO} ${item.DESCRIPCIONSUPERRUBRO} ${item.DESCRIPCIONGRUPOSUPERRUBRO}`,
 			PRECIOEFECTIVO: item.PRECIOVENTA * 0.8,
 			TALLES: item.TALLES ? extractTalles(item.TALLES) : ''
 		}))
