@@ -38,7 +38,7 @@
 </script>
 
 <div class="md:w-1/2 md:mx-auto px-3">
-	<label class="text-center text-lg mb-3" for="">Ingrese codigo o descripcion del articulo</label>
+	<label class="text-center text-lg mb-3" for="">Ingrese codigo o descripción del articulo</label>
 	<input type="search" class="input" placeholder="Buscar" bind:value={filter} />
 </div>
 {#if $searchStore.filtered.length === 0 && filter.length === 0}
