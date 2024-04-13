@@ -42,6 +42,7 @@ export const load = async ({ cookies, depends, fetch }) => {
 		token = `Bearer ${await login(fetch)}`;
 		cookies.set('Authorization', `Bearer ${token}`, { path: '/' });
 	}
+
 	const client = await redisClientInit();
 	const articulos: Article[] = JSON.parse(await client.get('articulos'));
 	client.disconnect();

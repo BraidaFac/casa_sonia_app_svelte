@@ -9,6 +9,7 @@ export interface SearchStoreModel<T extends Record<PropertyKey, any>> {
 	marca?: string;
 }
 
+export const filterStore = writable('');
 export const createSearchStore = <T extends Record<PropertyKey, any>>(data: T[]) => {
 	const { subscribe, set, update } = writable<SearchStoreModel<T>>({
 		data: data,

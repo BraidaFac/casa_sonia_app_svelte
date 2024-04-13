@@ -5,11 +5,17 @@
 	import { onMount } from 'svelte';
 	import { fetchWithPagination } from '$lib/utils/pagination.utils';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
+	import { initScanner } from '$lib/index';
+	import * as SDCCore from 'scandit-web-datacapture-core';
+	import { loadingStore } from '$lib/stores/loadingStore';
+	import { filterStore } from '$lib/stores/filter';
 	let { token, articulos } = data;
 	let loadingValue = 0;
 	let loading = false;
-	import { initScanner } from '$lib/index';
-	import * as SDCCore from 'scandit-web-datacapture-core';
+	loadingStore.subscribe((value) => {
+		loading = value;
+	});
+
 	let showScanner = false;
 	let view;
 	let barcode;
@@ -33,6 +39,7 @@
 				const recognizedBarcodes = session.newlyRecognizedBarcodes;
 				allresult = recognizedBarcodes;
 				result = recognizedBarcodes[0]._data.match(/^\w+/)[0];
+				filterStore.set(result);
 				flag = !flag;
 				//asynchronously turn off the camera as quickly as possible.
 				await camera.switchToDesiredState(SDCCore.FrameSourceState.Standby);
@@ -65,42 +72,44 @@
 	});
 </script>
 
-{#if articulos && !loading}
-	{#key flag}
-		<ProductContainer {articulos} codeScan={result} />
-	{/key}
-{:else}
-	<p class="text-4xl text-center my-5 animate-bounce">Cargando articulos</p>
-	<div class="z-40 absolute w-full">
-		<ProgressRadial
-			value={loadingValue}
-			class="mx-auto"
-			stroke={20}
-			meter="stroke-tertiary-500"
-			track="stroke-tertiary-500/30"
-		/>
+<div class="flex flex-col gap-10">
+	<div class="flex justify-center flex-col h-full p-3 mt-6">
+		<div class="hidden fixed top-0" id="data-capture-view"></div>
+		{#if showScanner && !loading}
+			<button
+				class="btn variant-filled-error my-3 mx-auto bottom-0 fixed w-full"
+				on:click={async () => {
+					await camera.switchToDesiredState(SDCCore.FrameSourceState.Off);
+					document.getElementById('data-capture-view').classList.toggle('hidden');
+					showScanner = !showScanner;
+				}}><span class="icon-[mdi--camera-outline] text-4xl"></span>Dejar de scannear</button
+			>
+		{:else if !showScanner && !loading}
+			<button
+				class="btn variant-filled-warning my-3 w-full h-12 mx-auto top-20"
+				on:click={async () => {
+					await camera.switchToDesiredState(SDCCore.FrameSourceState.On);
+					showScanner = !showScanner;
+					document.getElementById('data-capture-view').classList.toggle('hidden');
+				}}><span class="icon-[mdi--camera-outline] text-4xl"></span>Scanee codigo de barras</button
+			>
+		{/if}
 	</div>
-	<div class="w-full h-full backdrop-blur-sm absolute"></div>
-{/if}
-<div class="flex justify-center flex-col p-3 fixed top-0 h-full">
-	<div class="hidden" id="data-capture-view"></div>
-	{#if showScanner && !loading}
-		<button
-			class="btn variant-filled-error mb-3 fixed bottom-0"
-			on:click={async () => {
-				await camera.switchToDesiredState(SDCCore.FrameSourceState.Off);
-				document.getElementById('data-capture-view').classList.toggle('hidden');
-				showScanner = !showScanner;
-			}}><span class="icon-[mdi--camera-outline] text-4xl"></span>Dejar de scannear</button
-		>
-	{:else if !showScanner && !loading}
-		<button
-			class="btn variant-filled-warning mb-3 fixed bottom-0"
-			on:click={async () => {
-				await camera.switchToDesiredState(SDCCore.FrameSourceState.On);
-				showScanner = !showScanner;
-				document.getElementById('data-capture-view').classList.toggle('hidden');
-			}}><span class="icon-[mdi--camera-outline] text-4xl"></span>Scannear</button
-		>
+	{#if articulos && !loading}
+		{#key flag}
+			<ProductContainer {articulos} />
+		{/key}
+	{:else}
+		<p class="text-4xl text-center my-5 animate-bounce">Cargando articulos</p>
+		<div class="z-40 absolute w-full">
+			<ProgressRadial
+				value={loadingValue}
+				class="mx-auto"
+				stroke={20}
+				meter="stroke-tertiary-500"
+				track="stroke-tertiary-500/30"
+			/>
+		</div>
+		<div class="w-full h-full backdrop-blur-sm absolute"></div>
 	{/if}
 </div>
