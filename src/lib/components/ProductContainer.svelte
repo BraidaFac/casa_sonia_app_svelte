@@ -35,6 +35,31 @@
 	function truncarACentena(numero) {
 		return Math.round(numero / 100) * 100;
 	}
+	function orderProducts(products) {
+		products.sort(function (a, b) {
+			if (a.DESCRIPCIONGRUPOSUPERRUBRO > b.DESCRIPCIONGRUPOSUPERRUBRO) {
+				return 1;
+			}
+			if (a.DESCRIPCIONGRUPOSUPERRUBRO < b.DESCRIPCIONGRUPOSUPERRUBRO) {
+				return -1;
+			}
+			if (a.DESCRIPCIONSUPERRUBRO > b.DESCRIPCIONSUPERRUBRO) {
+				return 1;
+			}
+			if (a.DESCRIPCIONSUPERRUBRO < b.DESCRIPCIONSUPERRUBRO) {
+				return -1;
+			}
+			if (a.DESCRIPCIONRUBRO > b.DESCRIPCIONRUBRO) {
+				return 1;
+			}
+			if (a.DESCRIPCIONRUBRO < b.DESCRIPCIONRUBRO) {
+				return -1;
+			}
+			return 0;
+		});
+
+		return products;
+	}
 </script>
 
 <div class="md:w-1/2 md:mx-auto px-3">
@@ -73,7 +98,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each $searchStore.filtered as prod}
+				{#each orderProducts($searchStore.filtered) as prod}
 					<tr>
 						<td>{prod.CODIGO_PRODUCTO}</td>
 						<td>{prod.NOMBRE}</td>

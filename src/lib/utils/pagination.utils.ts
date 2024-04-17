@@ -57,14 +57,12 @@ export async function fetchWithPagination(
 			item.ACTIVO
 	);
 
-	const sort_articles = orderProducts(
-		active_article.map((item) => ({
-			...item,
-			searchTerms: `${item.DESCRIPCION_MARCA} ${item.DESCRIPCIONRUBRO} ${item.NOMBRE} ${item.CODIGO_PRODUCTO} ${item.DESCRIPCIONSUPERRUBRO} ${item.DESCRIPCIONGRUPOSUPERRUBRO}`,
-			PRECIOEFECTIVO: item.PRECIOVENTA * 0.8,
-			TALLES: item.TALLES ? extractTalles(item.TALLES) : ''
-		}))
-	);
+	const sort_articles = active_article.map((item) => ({
+		...item,
+		searchTerms: `${item.DESCRIPCION_MARCA} ${item.DESCRIPCIONRUBRO} ${item.NOMBRE} ${item.CODIGO_PRODUCTO} ${item.DESCRIPCIONSUPERRUBRO} ${item.DESCRIPCIONGRUPOSUPERRUBRO}`,
+		PRECIOEFECTIVO: item.PRECIOVENTA * 0.8,
+		TALLES: item.TALLES ? extractTalles(item.TALLES) : ''
+	}));
 	//const articles_worked = await addPrices(sort_articles, token);
 
 	/* sort_articles.forEach((article) => {
@@ -99,26 +97,6 @@ export async function fetchWithPagination(
 function extractTalles(talles: string) {
 	const talles_splited = talles.split('|');
 	return `${talles_splited[0]} | ${talles_splited[talles_splited.length - 1]}`;
-}
-
-function orderProducts(products) {
-	products.sort(function (a, b) {
-		if (a.DESCRIPCION_MARCA > b.DESCRIPCION_MARCA) {
-			return 1;
-		}
-		if (a.DESCRIPCION_MARCA < b.DESCRIPCION_MARCA) {
-			return -1;
-		}
-		if (a.NOMBRE > b.NOMBRE) {
-			return 1;
-		}
-		if (a.NOMBRE < b.NOMBRE) {
-			return -1;
-		}
-		return 0;
-	});
-
-	return products;
 }
 
 /* async function addPrices(articles: Article[], token: string) {
