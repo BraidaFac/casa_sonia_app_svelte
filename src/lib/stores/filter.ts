@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-export interface SearchStoreModel<T extends Record<PropertyKey, any>> {
+export interface SearchStoreModel<T extends Record<PropertyKey, unknown>> {
 	data: T[];
 	filtered: T[];
 	search: string | undefined;
@@ -10,7 +10,7 @@ export interface SearchStoreModel<T extends Record<PropertyKey, any>> {
 }
 
 export const filterStore = writable('');
-export const createSearchStore = <T extends Record<PropertyKey, any>>(data: T[]) => {
+export const createSearchStore = <T extends Record<PropertyKey, unknown>>(data: T[]) => {
 	const { subscribe, set, update } = writable<SearchStoreModel<T>>({
 		data: data,
 		filtered: data,
@@ -26,12 +26,28 @@ export const createSearchStore = <T extends Record<PropertyKey, any>>(data: T[])
 	};
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const searchHandler = <T extends Record<PropertyKey, any>>(store: SearchStoreModel<T>) => {
 	{
-		const searchTerm = store.search?.toLowerCase();
+		const searchTerm: string = store.search?.toLowerCase();
 
-		store.filtered = store.data.filter((item) => {
-			return item.searchTerms.toLowerCase().includes(searchTerm);
-		});
+		if (searchTerm) {
+			const filterSearchSplited = searchTerm.split(' ');
+			store.filtered = store.data.filter((item) => {
+				let counter = 0;
+				filterSearchSplited.forEach((word) => {
+					if (item.searchTerms.toLowerCase().includes(word)) {
+						counter++;
+					}
+				});
+				if (item.searchTerms.toLowerCase().includes(filterSearchSplited.join(' '))) {
+					console.log(item);
+				}
+
+				return counter === filterSearchSplited.length ? item : undefined;
+			});
+		} else {
+			store.filtered = [];
+		}
 	}
 };

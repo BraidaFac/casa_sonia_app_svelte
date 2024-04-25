@@ -50,6 +50,9 @@
 		gsr.sort((a, b) => a.descripcion.localeCompare(b.descripcion));
 		sr.sort((a, b) => a.descripcion.localeCompare(b.descripcion));
 		gsrStore.set(gsr);
+
+		gsr.forEach((item) => console.log(item.descripcion.split(' ').flatMap((item) => item)));
+
 		loadingStore.set(false);
 	});
 </script>
