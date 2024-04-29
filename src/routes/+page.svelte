@@ -23,7 +23,18 @@
 	let camera;
 	let allresult;
 	let flag: boolean = false;
-
+	let interval;
+	$: {
+		if (loading === true) {
+			loadingValue = 0;
+			interval = setInterval(() => {
+				loadingValue = loadingValue + 3;
+			}, 500);
+		} else {
+			loadingValue = 0;
+			clearInterval(interval);
+		}
+	}
 	onMount(async () => {
 		const response = await initScanner();
 		if (response) {
@@ -50,9 +61,6 @@
 		barcode.addListener(listener);
 		if (!articulos) {
 			loading = true;
-			const interval = setInterval(() => {
-				loadingValue = loadingValue + 3;
-			}, 500);
 			articulos = await fetchWithPagination('productos', 1000, token);
 			const res = await fetch('/api', {
 				method: 'POST',
@@ -64,7 +72,6 @@
 				})
 			});
 			loading = false;
-			clearInterval(interval);
 			if (res.status !== 200) {
 				alert('No se cargaron los articulos. Intente nuevamente');
 			}
@@ -100,7 +107,7 @@
 			<ProductContainer {articulos} />
 		{/key}
 	{:else}
-		<p class="text-4xl text-center my-5 animate-bounce">Cargando articulos</p>
+		<p class="text-4xl text-center my-5 animate-bounce z-50 mb-16">Cargando articulos</p>
 		<div class="z-40 absolute w-full">
 			<ProgressRadial
 				value={loadingValue}

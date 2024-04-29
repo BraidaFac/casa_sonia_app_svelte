@@ -9,6 +9,10 @@ export const redisClientInit = async () => {
 			port: +REDIS_PORT
 		}
 	});
+
+	client.on('error', (error) => {
+		console.log('Error: ', error);
+	});
 	client.connect();
 	return client;
 };
