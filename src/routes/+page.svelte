@@ -9,11 +9,22 @@
 	import * as SDCCore from 'scandit-web-datacapture-core';
 	import { loadingStore } from '$lib/stores/loadingStore';
 	import { filterStore } from '$lib/stores/filter';
+	import { page } from '$app/stores';
 	let { token, articulos } = data;
+	$: {
+		articulos = $page.data.articulos;
+	}
 	let loadingValue = 0;
 	let loading = false;
 	loadingStore.subscribe((value) => {
 		loading = value;
+		let interval;
+		if (loading) {
+			loadingValue = 0;
+			interval = setInterval(() => (loadingValue = loadingValue + 3), 500);
+		} else {
+			clearInterval(interval);
+		}
 	});
 
 	let showScanner = false;
@@ -23,6 +34,7 @@
 	let camera;
 	let allresult;
 	let flag: boolean = false;
+	let interval;
 
 	onMount(async () => {
 		const response = await initScanner();
@@ -50,7 +62,7 @@
 		barcode.addListener(listener);
 		if (!articulos) {
 			loading = true;
-			const interval = setInterval(() => {
+			interval = setInterval(() => {
 				loadingValue = loadingValue + 3;
 			}, 500);
 			articulos = await fetchWithPagination('productos', 1000, token);
@@ -65,6 +77,7 @@
 			});
 			loading = false;
 			clearInterval(interval);
+			loadingValue = 0;
 			if (res.status !== 200) {
 				alert('No se cargaron los articulos. Intente nuevamente');
 			}
@@ -96,12 +109,12 @@
 		{/if}
 	</div>
 	{#if articulos && !loading}
-		{#key flag}
+		{#key articulos || flag}
 			<ProductContainer {articulos} />
 		{/key}
 	{:else}
-		<p class="text-4xl text-center my-5 animate-bounce">Cargando articulos</p>
-		<div class="z-40 absolute w-full">
+		<p class="text-4xl text-center my-5 animate-bounce z-50 mb-5">Cargando articulos</p>
+		<div class="z-40 w-full">
 			<ProgressRadial
 				value={loadingValue}
 				class="mx-auto"
