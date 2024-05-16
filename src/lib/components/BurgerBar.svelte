@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { goto, invalidate } from '$app/navigation';
+	import { invalidate } from '$app/navigation';
 	import { fetchWithPagination } from '$lib/utils/pagination.utils';
-	import { Avatar, ProgressRadial, ProgressBar } from '@skeletonlabs/skeleton';
 	import { page } from '$app/stores';
 	import { loadingStore } from '$lib/stores/loadingStore';
 
@@ -12,14 +11,11 @@
 	loadingStore.subscribe((loadingValue) => {
 		loading = loadingValue;
 	});
-
 	async function refreshApi() {
 		const token = $page.data.token;
 		action_flag = !action_flag;
 		loadingStore.set(true);
-
 		const articulos = await fetchWithPagination('productos', 1000, token);
-
 		const res = await fetch('/api', {
 			method: 'POST',
 			headers: {
