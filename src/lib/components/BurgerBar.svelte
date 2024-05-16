@@ -12,6 +12,7 @@
 	loadingStore.subscribe((loadingValue) => {
 		loading = loadingValue;
 	});
+
 	async function refreshApi() {
 		const token = $page.data.token;
 		action_flag = !action_flag;
@@ -31,7 +32,7 @@
 		loadingStore.set(false);
 		if (res.status === 200) {
 			alert('Se actualizo correctamente');
-			await invalidate('app:main');
+			invalidate('app:main');
 		} else {
 			alert(JSON.stringify(await res.json()));
 			alert('No se actualizo correctamente. Intente nuevamente');

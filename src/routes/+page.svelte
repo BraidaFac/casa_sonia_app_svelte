@@ -35,7 +35,6 @@
 	let allresult;
 	let flag: boolean = false;
 	let interval;
-
 	onMount(async () => {
 		const response = await initScanner();
 		if (response) {
