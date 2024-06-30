@@ -11,5 +11,8 @@ export type Article = {
 	PRECIOVENTA: number;
 	ACTIVO: number;
 	searchTerms?: string;
+	stocks?: {
+		[key: string]: [] | null;
+	};
 	PRECIOEFECTIVO?: number;
 };

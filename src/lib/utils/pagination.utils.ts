@@ -57,41 +57,15 @@ export async function fetchWithPagination(
 			item.ACTIVO
 	);
 
-	const sort_articles = active_article.map((item) => ({
+	const detailedArticles = active_article.map((item) => ({
 		...item,
 		searchTerms: `${item.DESCRIPCION_MARCA} ${item.DESCRIPCIONRUBRO} ${item.NOMBRE} ${item.CODIGO_PRODUCTO} ${item.DESCRIPCIONSUPERRUBRO} ${item.DESCRIPCIONGRUPOSUPERRUBRO}`,
-		PRECIOEFECTIVO: item.PRECIOVENTA * 0.8,
 		TALLES: item.TALLES ? extractTalles(item.TALLES) : ''
 	}));
-	//const articles_worked = await addPrices(sort_articles, token);
 
-	/* sort_articles.forEach((article) => {
-		const price = prices.find((item) => item.codigoarticulo === article.codigoarticulo);
-		if (!price) {
-			article.precioventa1 = 0;
-		} else {
-			article.precioventa1 = price.preciolista1;
-		}
-		article.searchTerm = `${article.marca.descripcion} ${article.rubro.descripcion} ${article.descripcion} ${article.codigoparticular}`;
-	});  */
+	const articlesWithStockRuta = await addStock(detailedArticles, token, '003');
 
-	return sort_articles;
-	//const mapped_data_articles: Article[] = data_articles.flatMap((item) => item.data as Article[]);
-	//console.log('mapped_data_articles', mapped_data_articles);
-
-	/* for (let i = 0; i < sort_articles.length; i++) {
-		try {
-			sort_articles[i].searchTerms =
-				`${sort_articles[i].marca.descripcion} ${sort_articles[i].rubro.descripcion} ${sort_articles[i].descripcion} ${sort_articles[i].codigoparticular}`;
-			const response_article = await instance.get(`/${sort_articles[i].codigoarticulo}/precio`);
-
-			const data_article = await response_article.data.data.preciolista1;
-			sort_articles[i].precioventa1 = data_article;
-		} catch (error) {
-			sort_articles[i].precioventa1 = 0;
-		}
-	} */
-	//return sort_articles;
+	return articlesWithStockRuta;
 }
 
 function extractTalles(talles: string) {
@@ -99,46 +73,40 @@ function extractTalles(talles: string) {
 	return `${talles_splited[0]} | ${talles_splited[talles_splited.length - 1]}`;
 }
 
-/* async function addPrices(articles: Article[], token: string) {
+async function addStock(articles: Article[], token: string, deposito: string) {
 	const instance = axios.create({
-		baseURL: `${ENDPOINT_API}/articulos/`,
-		timeout: 100000,
+		baseURL: `${ENDPOINT_API}`,
+		timeout: 1000000,
 		headers: {
 			'Content-Type': 'application/json',
 			Authorization: `${token}`
 		}
 	});
-	const quantity = 25;
-	const pages = articles.length / quantity;
-	let prices = [];
-	for (let i = 0; i < pages; i++) {
-		const responses = await Promise.allSettled(
-			articles.slice(i * quantity, (i + 1) * quantity).map((item) => {
-				{
-					return instance.get(`${item.codigoarticulo}/precio`, {
-						headers: {
-							'Content-Type': 'application/json',
-							Authorization: `${token}`
-						}
-					});
-				}
-			})
-		); */
+	const url = `stock?codigosdepositos=${deposito}&limit=5000000`;
+	const stock = (await instance.get(url)).data.data;
+	const depositoNombre = deposito === '004' ? 'QUIVER' : deposito === '002' ? 'CENTRO' : 'RUTA';
+	articles = articles
+		.map((item: Article) => {
+			const article = {
+				...item,
+				searchTerms: `${item.DESCRIPCION_MARCA} ${item.DESCRIPCIONRUBRO} ${item.NOMBRE} ${item.CODIGO_PRODUCTO} ${item.DESCRIPCIONSUPERRUBRO} ${item.DESCRIPCIONGRUPOSUPERRUBRO}`,
+				TALLES: item.TALLES ? extractTalles(item.TALLES) : ''
+			};
 
-/* 		const newPrices = responses
-			.filter((response) => response.status === 'fulfilled')
-			.flatMap((item) => item.value.data.data);
+			const stocks = stock.filter((s) => s.CODIGOARTICULO === item.ID_ARTICULO);
+			if (!article.stocks) {
+				article.stocks = {};
+			}
+			if (stocks.length === 0) {
+				article.stocks[depositoNombre] = null;
+			} else {
+				article.stocks[depositoNombre] = stocks;
+			}
+			return article;
+		})
+		.filter(
+			(item: Article) => item.stocks && item.stocks[depositoNombre] !== null && item.STOCKTOTAL > 0
+		);
 
-		prices = [...prices, ...newPrices];
-	}
-	articles.forEach((article) => {
-		const price = prices.find((item) => item.codigoarticulo === article.codigoarticulo);
-		if (!price) {
-			article.precioventa1 = 0;
-		} else {
-			article.precioventa1 = price.preciolista1;
-		}
-		article.searchTerms = `${article.marca.descripcion} ${article.rubro.descripcion} ${article.descripcion} ${article.codigoparticular}`;
-	});
-	return articles; */
-//create an array wit promises for each article
+	return articles;
+}

@@ -22,7 +22,6 @@
 		contentType: 'gsr',
 		content: gsr
 	};
-	console.log();
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

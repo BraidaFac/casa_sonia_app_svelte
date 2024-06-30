@@ -20,8 +20,7 @@
 					class="flex flex-col md:w-96 gap-1 items-center"
 					use:enhance={() => {
 						loading = true;
-
-						return ({ update, result }) => {
+						return ({ update }) => {
 							update();
 							setTimeout(() => {
 								loading = false;

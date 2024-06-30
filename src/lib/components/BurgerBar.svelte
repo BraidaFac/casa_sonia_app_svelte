@@ -3,7 +3,8 @@
 	import { fetchWithPagination } from '$lib/utils/pagination.utils';
 	import { page } from '$app/stores';
 	import { loadingStore } from '$lib/stores/loadingStore';
-
+	import { getModalStore } from '@skeletonlabs/skeleton';
+	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	export let user: any;
 
 	$: action_flag = false;
@@ -34,6 +35,13 @@
 			alert('No se actualizo correctamente. Intente nuevamente');
 		}
 	}
+
+	const modalCoef: ModalSettings = {
+		type: 'component',
+		component: 'modalCoeficiente',
+		meta: {}
+	};
+	const modalStore = getModalStore();
 </script>
 
 <div class="burger relative float-right">
@@ -62,28 +70,24 @@
 				>
 					<div class="py-1" role="none">
 						<a
-							href="/admin/excel"
-							on:click={() => (action_flag = !action_flag)}
-							class="text-gray-700 block px-4 py-2 text-sm"
-							role="menuitem"
-							tabindex="-1"
-							id="menu-item-1">Excel</a
-						>
-						<a
-							href="/admin/pdf"
-							on:click={() => (action_flag = !action_flag)}
-							class="text-gray-700 block px-4 py-2 text-sm"
-							role="menuitem"
-							tabindex="-1"
-							id="menu-item-1">PDF</a
-						>
-						<a
 							href="/"
 							on:click|preventDefault={refreshApi}
 							class="text-gray-700 block px-4 py-2 text-sm"
 							role="menuitem"
 							tabindex="-1"
-							id="menu-item-1">Actualizar datos</a
+							id="menu-item-1"
+							>Actualizar
+						</a>
+						<a
+							href="/"
+							on:click|preventDefault={() => {
+								modalStore.trigger(modalCoef);
+								action_flag = !action_flag;
+							}}
+							class="text-gray-700 block px-4 py-2 text-sm"
+							role="menuitem"
+							tabindex="-1"
+							id="menu-item-1">Cuotas</a
 						>
 						<form method="POST" action="/logout" role="none">
 							<button

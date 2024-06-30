@@ -4,8 +4,16 @@
 	import type { Article } from '$lib/utils/types.utils';
 	import { onDestroy } from 'svelte';
 	export let articulos: Article[];
+	export let coeficients: {
+		name: string;
+		value: number;
+	}[];
 
+	const coef_3 = coeficients.find((coef) => coef.name === 'coef_3')?.value ?? 1;
+	const coef_6 = coeficients.find((coef) => coef.name === 'coef_6')?.value ?? 1;
+	const coef_efect = coeficients.find((coef) => coef.name === 'coef_efect')?.value ?? 1;
 	let filter;
+
 	//filter
 	filterStore.subscribe((value) => {
 		filter = value;
@@ -37,6 +45,12 @@
 	}
 	function orderProducts(products) {
 		products.sort(function (a, b) {
+			if (a.DESCRIPCION_MARCA > b.DESCRIPCION_MARCA) {
+				return 1;
+			}
+			if (a.DESCRIPCION_MARCA < b.DESCRIPCION_MARCA) {
+				return -1;
+			}
 			if (a.DESCRIPCIONGRUPOSUPERRUBRO > b.DESCRIPCIONGRUPOSUPERRUBRO) {
 				return 1;
 			}
@@ -85,28 +99,46 @@
 {/if}
 <div class="table-container md:p-4 p-2">
 	{#if $searchStore.filtered.length !== 0}
-		<table class="table table-hover md:table-fixed">
+		<table class="table table-fixed">
 			<thead>
 				<tr>
-					<th>Codigo</th>
 					<th>Descripcion</th>
 					<th>Marca</th>
 					<th>Precio Efectivo</th>
-					<th>Precio tarjeta</th>
+					<th>3 cuotas de</th>
+					<th>6 cuotas de</th>
 					<th>Talles</th>
 					<th>Rubro</th>
+					<th>3 cuotas</th>
+					<th>6 cuotas</th>
+					<th>Codigo</th>
 				</tr>
 			</thead>
 			<tbody>
 				{#each orderProducts($searchStore.filtered) as prod}
 					<tr>
-						<td>{prod.CODIGO_PRODUCTO}</td>
 						<td>{prod.NOMBRE}</td>
 						<td>{prod.DESCRIPCION_MARCA}</td>
-						<td>${addThousandSeparator(truncarACentena(+prod.PRECIOEFECTIVO.toFixed(0)))}</td>
-						<td>${addThousandSeparator(truncarACentena(+prod.PRECIOVENTA.toFixed(0)))}</td>
+						<td>${addThousandSeparator(truncarACentena(+prod.PRECIOVENTA * coef_efect))}</td>
+						<td
+							>${addThousandSeparator(
+								truncarACentena(((+prod.PRECIOVENTA * coef_3) / 3).toFixed(0))
+							)}</td
+						>
+						<td
+							>${addThousandSeparator(
+								truncarACentena(((+prod.PRECIOVENTA * coef_6) / 6).toFixed(0))
+							)}</td
+						>
 						<td>{prod.TALLES}</td>
 						<td>{prod.DESCRIPCIONRUBRO}</td>
+						<td
+							>${addThousandSeparator(truncarACentena((+prod.PRECIOVENTA * coef_3).toFixed(0)))}</td
+						>
+						<td
+							>${addThousandSeparator(truncarACentena((+prod.PRECIOVENTA * coef_6).toFixed(0)))}</td
+						>
+						<td>{prod.CODIGO_PRODUCTO}</td>
 					</tr>
 				{/each}
 			</tbody>
@@ -116,34 +148,134 @@
 
 <style>
 	.table {
-		width: 100%;
+		width: 400%;
+	}
+	@media (min-width: 768px) {
+		.table {
+			width: 100%;
+		}
 	}
 
+	td:nth-child(3),
 	td:nth-child(4),
-	td:nth-child(5) {
+	td:nth-child(5),
+	td:nth-child(8),
+	td:nth-child(9) {
 		font-weight: bold;
 	}
 
-	@media (min-width: 768px) {
+	@media (max-width: 768px) {
 		td:nth-child(1) {
-			width: 30% !important;
+			width: 10% !important;
 			white-space: nowrap;
 			overflow: auto;
 			text-align: left;
 		}
 		td:nth-child(2) {
-			width: 20% !important;
+			width: 5% !important;
+			white-space: nowrap;
+			overflow: auto;
 		}
 		td:nth-child(3) {
-			width: 20% !important;
+			width: 5% !important;
+			white-space: nowrap;
+			overflow: auto;
 		}
 		td:nth-child(4) {
-			width: 30% !important;
+			width: 5% !important;
+			white-space: nowrap;
+			overflow: auto;
+		}
+		td:nth-child(5) {
+			width: 5% !important;
+			white-space: nowrap;
+			overflow: auto;
+		}
+		td:nth-child(6) {
+			width: 5% !important;
+			white-space: nowrap;
+			overflow: auto;
+		}
+		td:nth-child(7) {
+			width: 5% !important;
+			white-space: nowrap;
+			overflow: auto;
+		}
+		td:nth-child(8) {
+			width: 10% !important;
+			white-space: nowrap;
+			overflow: auto;
+		}
+		td:nth-child(9) {
+			width: 5% !important;
+			white-space: nowrap;
+			overflow: auto;
+		}
+		td:nth-child(10) {
+			width: 5% !important;
+			white-space: nowrap;
+			overflow: auto;
+		}
+
+		th:nth-child(1) {
+			width: 10% !important;
+			white-space: nowrap;
+			overflow: auto;
+		}
+		th:nth-child(2) {
+			width: 5% !important;
+			white-space: nowrap;
+			overflow: auto;
+		}
+		th:nth-child(3) {
+			width: 5% !important;
+			white-space: nowrap;
+			overflow: auto;
+		}
+		th:nth-child(4) {
+			width: 5% !important;
+			white-space: nowrap;
+			overflow: auto;
+		}
+		th:nth-child(5) {
+			width: 5% !important;
+			white-space: nowrap;
+			overflow: auto;
+		}
+
+		th:nth-child(6) {
+			width: 5% !important;
+			white-space: nowrap;
+			overflow: auto;
+		}
+		th:nth-child(7) {
+			width: 5% !important;
+			white-space: nowrap;
+			overflow: auto;
+		}
+		th:nth-child(8) {
+			width: 7% !important;
+			white-space: nowrap;
+			overflow: auto;
+		}
+		th:nth-child(9) {
+			width: 5% !important;
+			white-space: nowrap;
+			overflow: auto;
+		}
+		th:nth-child(10) {
+			width: 5% !important;
+			white-space: nowrap;
+			overflow: auto;
 		}
 	}
+
 	@media (max-width: 768px) {
 		.table thead tr {
-			text-align: left;
+			text-align: center;
+		}
+		.table tbody tr td {
+			text-align: center !important;
 		}
 		.table tbody tr td {
 			font-size: small !important;

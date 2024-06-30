@@ -35,8 +35,6 @@ export const actions: Actions = {
 					errors
 				};
 			} else {
-				console.log(error);
-
 				return {
 					message: 'El usuario ya existe'
 				};

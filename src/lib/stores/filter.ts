@@ -40,9 +40,6 @@ export const searchHandler = <T extends Record<PropertyKey, any>>(store: SearchS
 						counter++;
 					}
 				});
-				if (item.searchTerms.toLowerCase().includes(filterSearchSplited.join(' '))) {
-					console.log(item);
-				}
 
 				return counter === filterSearchSplited.length ? item : undefined;
 			});

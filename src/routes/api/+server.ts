@@ -10,7 +10,6 @@ export const POST: RequestHandler = async ({ request }) => {
 		await client.set('articulos', JSON.stringify(articulos), { EX: 60 * 60 * 5 });
 		return new Response('success', { status: 200 });
 	} catch (err) {
-		console.log(err);
 		return new Response('Error', { status: 500 });
 	} finally {
 		await client.disconnect();

@@ -11,8 +11,10 @@
 	import { filterStore } from '$lib/stores/filter';
 	import { page } from '$app/stores';
 	let { token, articulos } = data;
+	let { coeficients } = $page.data.coeficients;
 	$: {
 		articulos = $page.data.articulos;
+		coeficients = $page.data.coeficients;
 	}
 	let loadingValue = 0;
 	let loading = false;
@@ -108,8 +110,8 @@
 		{/if}
 	</div>
 	{#if articulos && !loading}
-		{#key articulos || flag}
-			<ProductContainer {articulos} />
+		{#key articulos || flag || coeficients}
+			<ProductContainer {articulos} {coeficients} />
 		{/key}
 	{:else}
 		<p class="text-4xl text-center my-5 animate-bounce z-50 mb-5">Cargando articulos</p>
