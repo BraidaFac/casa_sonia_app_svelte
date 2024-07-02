@@ -132,7 +132,6 @@
 								truncarACentena(((+prod.PRECIOVENTA * coef_6) / 6).toFixed(0))
 							)}</td
 						>
-
 						<td>{prod.CODIGO_PRODUCTO}</td>
 					</tr>
 				{/each}
@@ -152,10 +151,7 @@
 	}
 
 	td:nth-child(3),
-	td:nth-child(4),
-	td:nth-child(5),
-	td:nth-child(8),
-	td:nth-child(9) {
+	td:nth-child(4) {
 		font-weight: bold;
 	}
 
