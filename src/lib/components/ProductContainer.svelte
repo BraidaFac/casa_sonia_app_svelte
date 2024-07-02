@@ -105,12 +105,11 @@
 					<th>Descripcion</th>
 					<th>Marca</th>
 					<th>Precio Efectivo</th>
-					<th>3 cuotas de</th>
-					<th>6 cuotas de</th>
+					<th>Precio Tarjeta</th>
 					<th>Talles</th>
 					<th>Rubro</th>
-					<th>3 cuotas</th>
-					<th>6 cuotas</th>
+					<th>3 cuotas de</th>
+					<th>6 cuotas de</th>
 					<th>Codigo</th>
 				</tr>
 			</thead>
@@ -120,6 +119,9 @@
 						<td>{prod.NOMBRE}</td>
 						<td>{prod.DESCRIPCION_MARCA}</td>
 						<td>${addThousandSeparator(truncarACentena(+prod.PRECIOVENTA * coef_efect))}</td>
+						<td>${addThousandSeparator(truncarACentena(+prod.PRECIOVENTA))}</td>
+						<td>{prod.TALLES}</td>
+						<td>{prod.DESCRIPCIONRUBRO}</td>
 						<td
 							>${addThousandSeparator(
 								truncarACentena(((+prod.PRECIOVENTA * coef_3) / 3).toFixed(0))
@@ -130,14 +132,7 @@
 								truncarACentena(((+prod.PRECIOVENTA * coef_6) / 6).toFixed(0))
 							)}</td
 						>
-						<td>{prod.TALLES}</td>
-						<td>{prod.DESCRIPCIONRUBRO}</td>
-						<td
-							>${addThousandSeparator(truncarACentena((+prod.PRECIOVENTA * coef_3).toFixed(0)))}</td
-						>
-						<td
-							>${addThousandSeparator(truncarACentena((+prod.PRECIOVENTA * coef_6).toFixed(0)))}</td
-						>
+
 						<td>{prod.CODIGO_PRODUCTO}</td>
 					</tr>
 				{/each}
@@ -166,7 +161,7 @@
 
 	@media (max-width: 768px) {
 		td:nth-child(1) {
-			width: 10% !important;
+			width: 8% !important;
 			white-space: nowrap;
 			overflow: auto;
 			text-align: left;
@@ -211,14 +206,8 @@
 			white-space: nowrap;
 			overflow: auto;
 		}
-		td:nth-child(10) {
-			width: 5% !important;
-			white-space: nowrap;
-			overflow: auto;
-		}
-
 		th:nth-child(1) {
-			width: 10% !important;
+			width: 8% !important;
 			white-space: nowrap;
 			overflow: auto;
 		}
@@ -259,11 +248,6 @@
 			overflow: auto;
 		}
 		th:nth-child(9) {
-			width: 5% !important;
-			white-space: nowrap;
-			overflow: auto;
-		}
-		th:nth-child(10) {
 			width: 5% !important;
 			white-space: nowrap;
 			overflow: auto;
