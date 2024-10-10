@@ -24,6 +24,6 @@ export const load: LayoutServerLoad = async ({ locals, depends }) => {
 					]
 		};
 	} catch (err) {
-		throw Error(err);
+		throw new Error(err);
 	}
 };

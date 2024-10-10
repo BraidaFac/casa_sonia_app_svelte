@@ -11,7 +11,7 @@ export async function initScanner() {
 	view.setProgressBarMessage('Loading ...');
 	await SDCCore.configure({
 		licenseKey: PUBLIC_SCANDIT_KEY,
-		libraryLocation: 'https://unpkg.com/scandit-web-datacapture-barcode@6.23/build/engine',
+		libraryLocation: 'https://unpkg.com/scandit-web-datacapture-barcode@6.28/build/engine',
 		moduleLoaders: [barcodeCaptureLoader()]
 	});
 	view.hideProgressBar();

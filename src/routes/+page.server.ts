@@ -1,7 +1,7 @@
 import { redisClientInit } from '$lib/utils/redis';
 import { API_PASSWORD, API_DEVICE, API_USER, ENDPOINT_API } from '$env/static/private';
 import type { Article } from '$lib/utils/types.utils';
-
+export const ssr = false;
 const login = async (fetch) => {
 	const response = await fetch(`${ENDPOINT_API}/auth/login`, {
 		method: 'POST',
@@ -30,8 +30,6 @@ const validateToken = async (token) => {
 	});
 	return response.status === 200;
 };
-
-export const ssr = false;
 
 export const load = async ({ cookies, depends, fetch }) => {
 	depends('app:main');
