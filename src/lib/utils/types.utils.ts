@@ -1,18 +1,18 @@
 export type Article = {
-	ID_ARTICULO: string;
-	CODIGO_PRODUCTO: string;
-	NOMBRE: string;
-	DESCRIPCIONGRUPOSUPERRUBRO: string;
-	DESCRIPCIONSUPERRUBRO: string;
-	DESCRIPCIONRUBRO: string;
-	DESCRIPCION_MARCA: string;
-	TALLES: string;
-	STOCKTOTAL: number;
-	PRECIOVENTA: number;
-	ACTIVO: number;
-	searchTerms?: string;
+	ID_ARTICULO?: string | null;
+	CODIGO_PRODUCTO?: string | null;
+	NOMBRE?: string | null;
+	DESCRIPCIONGRUPOSUPERRUBRO?: string | null;
+	DESCRIPCIONSUPERRUBRO?: string | null;
+	DESCRIPCIONRUBRO?: string | null;
+	DESCRIPCION_MARCA?: string | null;
+	TALLES?: string | null;
+	STOCKTOTAL?: number | null;
+	PRECIOVENTA?: number | null;
+	ACTIVO?: number | null;
+	searchTerms?: string | null;
 	stocks?: {
 		[key: string]: [] | null;
-	};
-	PRECIOEFECTIVO?: number;
+	} | null;
+	PRECIOEFECTIVO?: number | null;
 };

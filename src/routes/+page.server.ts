@@ -1,6 +1,8 @@
-import { redisClientInit } from '$lib/utils/redis';
-import { API_PASSWORD, API_DEVICE, API_USER, ENDPOINT_API } from '$env/static/private';
-import type { Article } from '$lib/utils/types.utils';
+import { API_DEVICE, API_PASSWORD, API_USER, ENDPOINT_API } from '$env/static/private';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { read, utils } from 'xlsx';
+
 export const ssr = false;
 const login = async (fetch) => {
 	const response = await fetch(`${ENDPOINT_API}/auth/login`, {
@@ -41,8 +43,26 @@ export const load = async ({ cookies, depends, fetch }) => {
 		cookies.set('Authorization', `Bearer ${token}`, { path: '/' });
 	}
 
-	const client = await redisClientInit();
-	const articulos: Article[] = JSON.parse(await client.get('articulos'));
-	client.disconnect();
+	//const client = await redisClientInit();
+	//let articulos: Article[] = JSON.parse(await client.get('articulos'));
+
+	//client.disconnect();
+	const excelPath = join(process.cwd(), 'static', 'precios.xlsx');
+	const workbook = read(readFileSync(excelPath));
+	const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+	const excelData = utils.sheet_to_json(worksheet);
+
+	let articulos = updateArticlesPrices(excelData);
+
 	return { token, articulos };
+};
+
+const updateArticlesPrices = (excelData: any[]) => {
+	return excelData.map((row) => {
+		return {
+			CODIGO_PRODUCTO: row.codigoparticular,
+			PRECIOVENTA: row.precioventa,
+			searchTerms: row.codigoparticular
+		};
+	});
 };

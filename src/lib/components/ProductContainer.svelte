@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { gsrStore } from '$lib/stores/articles.store';
-	import { createSearchStore, searchHandler, filterStore } from '$lib/stores/filter';
+	import { createSearchStore, filterStore, searchHandler } from '$lib/stores/filter';
 	import type { Article } from '$lib/utils/types.utils';
 	import { onDestroy } from 'svelte';
 	export let articulos: Article[];
