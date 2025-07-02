@@ -7,7 +7,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	if (!articulos) return new Response('No hay articulos', { status: 400 });
 	const client = await redisClientInit();
 	try {
-		await client.set('articulos', JSON.stringify(articulos), { EX: 60 * 60 * 5 });
+		await client.set('articulos', JSON.stringify(articulos), { EX: 60 * 60 * 20 });
 		return new Response('success', { status: 200 });
 	} catch (err) {
 		return new Response('Error', { status: 500 });
