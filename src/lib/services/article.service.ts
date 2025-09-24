@@ -3,6 +3,7 @@ import {
 	EXCLUDED_BRANDS,
 	EXCLUDED_CATEGORIES,
 	STOCK_LIMIT,
+	WAREHOUSE_CODES,
 	WAREHOUSE_NAMES
 } from '$lib/constants/api.constants';
 import type { Article, StockItem } from '$lib/types/article.types';
@@ -35,14 +36,13 @@ export class ArticleService {
 
 		const processedArticles = this.processArticles(articles);
 		const filteredArticles = this.filterActiveArticles(processedArticles);
-		//const enrichedArticles = this.enrichArticlesWithSearchTerms(filteredArticles);
-		/* const articlesWithStock = await this.addStockInformation(
-			enrichedArticles,
+		const stockArticles = await this.addStockInformation(
+			filteredArticles,
 			token,
 			WAREHOUSE_CODES.RUTA
-		); */
+		);
 
-		return filteredArticles;
+		return stockArticles;
 	}
 
 	/**
@@ -92,7 +92,7 @@ export class ArticleService {
 	/**
 	 * Enriquece artículos con términos de búsqueda y talles procesados
 	 */
-	private static enrichArticlesWithSearchTerms(articles: Article[]): Article[] {
+	public static enrichArticlesWithSearchTerms(articles: Article[]): Article[] {
 		return articles.map((item) => ({
 			...item,
 			searchTerms: this.createSearchTerms(item),
@@ -103,7 +103,7 @@ export class ArticleService {
 	/**
 	 * Crea términos de búsqueda combinando varios campos
 	 */
-	private static createSearchTerms(article: Article): string {
+	public static createSearchTerms(article: Article): string {
 		return [
 			article.DESCRIPCION_MARCA,
 			article.DESCRIPCIONRUBRO,
