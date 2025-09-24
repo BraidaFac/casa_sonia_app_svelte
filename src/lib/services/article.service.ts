@@ -3,7 +3,6 @@ import {
 	EXCLUDED_BRANDS,
 	EXCLUDED_CATEGORIES,
 	STOCK_LIMIT,
-	WAREHOUSE_CODES,
 	WAREHOUSE_NAMES
 } from '$lib/constants/api.constants';
 import type { Article, StockItem } from '$lib/types/article.types';
@@ -36,14 +35,14 @@ export class ArticleService {
 
 		const processedArticles = this.processArticles(articles);
 		const filteredArticles = this.filterActiveArticles(processedArticles);
-		const enrichedArticles = this.enrichArticlesWithSearchTerms(filteredArticles);
-		const articlesWithStock = await this.addStockInformation(
+		//const enrichedArticles = this.enrichArticlesWithSearchTerms(filteredArticles);
+		/* const articlesWithStock = await this.addStockInformation(
 			enrichedArticles,
 			token,
 			WAREHOUSE_CODES.RUTA
-		);
+		); */
 
-		return articlesWithStock;
+		return filteredArticles;
 	}
 
 	/**
