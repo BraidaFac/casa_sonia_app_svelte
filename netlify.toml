@@ -1,0 +1,51 @@
+[build]
+  command = "npm run build"
+  publish = "build"
+  functions = ".netlify/functions"
+
+# 👇 Importante: Netlify CLI usará el adaptador de SvelteKit (render function)
+[functions]
+  directory = ".netlify/functions"
+
+# ⚠️ NO uses el redirect SPA para SvelteKit con SSR,
+# porque redirige todo a index.html y rompe /api y las rutas de servidor.
+# El adaptador ya genera su propio _redirects.
+
+# Headers de seguridad
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Headers para assets inmutables
+[[headers]]
+  for = "/build/_app/immutable/*"
+  [headers.values]
+    Cache-Control = "public, immutable, max-age=31536000"
+
+# Headers para fuentes
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+# Configuración para desarrollo local
+[dev]
+  command = "npm run dev"
+  targetPort = 5173 # o el puerto de Vite en tu proyecto
+  port = 8888
+  publish = "build"
+  autoLaunch = true
+
+# Variables de entorno
+[context.dev.environment]
+  NODE_ENV = "development"
+
+[context.production.environment]
+  NODE_ENV = "production"
+
+[context.branch-deploy.environment]
+  NODE_ENV = "development"

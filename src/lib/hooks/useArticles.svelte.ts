@@ -19,8 +19,6 @@ export function createArticlesHook() {
 
 		try {
 			startLoading();
-			console.log('loading');
-
 			const fetchedArticles = await ArticleService.fetchArticles(token);
 			await cacheArticles(fetchedArticles);
 
