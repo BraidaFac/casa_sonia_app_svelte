@@ -1,5 +1,5 @@
-import type { RequestHandler } from '@sveltejs/kit';
 import { redisClientInit } from '$lib/utils/redis';
+import type { RequestHandler } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const data = await request.json();
