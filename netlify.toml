@@ -40,12 +40,3 @@
   publish = "build"
   autoLaunch = true
 
-# Variables de entorno
-[context.dev.environment]
-  NODE_ENV = "development"
-
-[context.production.environment]
-  NODE_ENV = "production"
-
-[context.branch-deploy.environment]
-  NODE_ENV = "development"
