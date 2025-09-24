@@ -20,7 +20,8 @@ export function createArticlesHook() {
 		try {
 			startLoading();
 			const fetchedArticles = await ArticleService.fetchArticles(token);
-			await cacheArticles(fetchedArticles);
+
+			await cacheArticles(fetchedArticles.slice(0, 10));
 
 			articles = fetchedArticles;
 		} catch (error) {

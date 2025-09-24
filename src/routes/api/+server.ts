@@ -27,7 +27,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		return createSuccessResponse('Artículos cacheados exitosamente');
 	} catch (error) {
 		console.error('Error en API de cache de artículos:', error);
-		return createErrorResponse('Error interno del servidor', 500);
+		return createErrorResponse(error.message, 500);
 	}
 };
 
@@ -58,7 +58,7 @@ async function cacheArticles(articulos: Article[]): Promise<boolean> {
 	const TTL_HOURS = 20;
 	const TTL_SECONDS = TTL_HOURS * 60 * 60;
 
-	return await setRedisData('articulos', articulos, TTL_SECONDS);
+	return await setRedisData('CASASONIA', articulos, TTL_SECONDS);
 }
 
 /**

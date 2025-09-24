@@ -43,7 +43,7 @@ async function handleAuthentication(cookies: any, fetch: typeof globalThis.fetch
  */
 async function loadArticlesFromCache(): Promise<Article[]> {
 	try {
-		const articulos = await getRedisData('articulos');
+		const articulos = await getRedisData('CASASONIA');
 		return Array.isArray(articulos) ? articulos : [];
 	} catch (error) {
 		console.error('Error loading articles from cache:', error);
