@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
-	import { fetchWithPagination } from '$lib/utils/pagination.utils';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
+	import { ArticleService } from '$lib/services/article.service';
 	import { loadingStore } from '$lib/stores/loadingStore';
-	import { getModalStore } from '@skeletonlabs/skeleton';
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
+	import { getModalStore } from '@skeletonlabs/skeleton';
 	export let user: any;
 
 	$: action_flag = false;
@@ -13,10 +13,10 @@
 		loading = loadingValue;
 	});
 	async function refreshApi() {
-		const token = $page.data.token;
+		const token = page.data.token;
 		action_flag = !action_flag;
 		loadingStore.set(true);
-		const articulos = await fetchWithPagination('productos', 1000, token);
+		const articulos = await ArticleService.fetchArticles(token);
 		const res = await fetch('/api', {
 			method: 'POST',
 			headers: {

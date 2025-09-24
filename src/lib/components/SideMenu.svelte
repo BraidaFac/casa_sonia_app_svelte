@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { filterStore } from '$lib/stores/filter';
 	import { sideBarStatus } from '$lib/stores/loadingStore';
 	type sr = {
@@ -36,7 +35,8 @@
 		<div>
 			{#if contentToShow.contentType !== 'gsr'}
 				<button
-					on:click={() => {
+					aria-label="Volver atrás"
+					onclick={() => {
 						if (contentToShow.contentType === 'sr') {
 							contentToShow.content = gsr;
 							contentToShow.contentType = 'gsr';
@@ -51,7 +51,8 @@
 			{/if}
 		</div>
 		<button
-			on:click={() => {
+			aria-label="Cerrar menú"
+			onclick={() => {
 				$sideBarStatus = false;
 				contentToShow.contentType = 'gsr';
 				contentToShow.content = gsr;
@@ -70,7 +71,7 @@
 			{#if contentToShow.contentType !== 'gsr'}
 				<button
 					class="btn btn-sm variant-outline-success"
-					on:click={() => {
+					onclick={() => {
 						$filterStore =
 							contentToShow.contentType === 'sr'
 								? `${gsr.find((gsr) => contentToShow.content[0].gsr_id === gsr.id)?.descripcion ?? ''}`
@@ -87,7 +88,8 @@
 				<li class="side-menu__item mb-1 mt-1">
 					<a
 						href="#{item.id}"
-						on:click|preventDefault={() => {
+						onclick={(e) => {
+							e.preventDefault();
 							if (contentToShow.contentType === 'gsr') {
 								contentToShow.content = sr.filter((sr) => sr.gsr_id === item.id);
 								contentToShow.contentType = 'sr';

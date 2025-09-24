@@ -1,18 +1,2 @@
-export type Article = {
-	ID_ARTICULO: string;
-	CODIGO_PRODUCTO: string;
-	NOMBRE: string;
-	DESCRIPCIONGRUPOSUPERRUBRO: string;
-	DESCRIPCIONSUPERRUBRO: string;
-	DESCRIPCIONRUBRO: string;
-	DESCRIPCION_MARCA: string;
-	TALLES: string;
-	STOCKTOTAL: number;
-	PRECIOVENTA: number;
-	ACTIVO: number;
-	searchTerms?: string;
-	stocks?: {
-		[key: string]: [] | null;
-	};
-	PRECIOEFECTIVO?: number;
-};
+// Re-export types from the new location for backwards compatibility
+export type { ApiResponse, Article, ScannerComponents, StockItem } from '$lib/types/article.types';

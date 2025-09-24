@@ -1,17 +1,24 @@
 <script lang="ts">
-	import { getModalStore, ProgressRadial } from '@skeletonlabs/skeleton';
-	import { page } from '$app/stores';
 	import { invalidate } from '$app/navigation';
-	let case_form: HTMLFormElement;
-	let loading = false;
-	let response_state: number | undefined;
+	import { page } from '$app/state';
+	import { getModalStore, ProgressRadial } from '@skeletonlabs/skeleton';
+	let case_form = $state<HTMLFormElement>();
+	let loading = $state(false);
+	let response_state = $state<number | undefined>(undefined);
 
-	const coeficients = $page.data.coeficients;
-	console.log(coeficients);
+	const coeficients = $derived(page.data.coeficients);
 
-	let coef_3 = coeficients.find((coef) => coef.name === 'coef_3')?.value ?? 1;
-	let coef_6 = coeficients.find((coef) => coef.name === 'coef_6')?.value ?? 1;
-	let coef_efect = coeficients.find((coef) => coef.name === 'coef_efect')?.value ?? 1;
+	// Estados para los valores de los inputs (editables)
+	let coef_3 = $state(1);
+	let coef_6 = $state(1);
+	let coef_efect = $state(1);
+
+	// Efecto para inicializar los valores cuando cambien los coeficientes
+	$effect(() => {
+		coef_3 = coeficients.find((coef) => coef.name === 'coef_3')?.value ?? 1;
+		coef_6 = coeficients.find((coef) => coef.name === 'coef_6')?.value ?? 1;
+		coef_efect = coeficients.find((coef) => coef.name === 'coef_efect')?.value ?? 1;
+	});
 	const modalStore = getModalStore();
 
 	async function onFormSubmit() {
@@ -68,7 +75,7 @@
 					<span class="mr-5">Coeficiente 6 cuotas</span>
 					<input class="input inline w-20 lg:w-32" name="coef_6" type="text" bind:value={coef_6} />
 				</label>
-				<button class="variant-filled-success btn text-center" on:click={onFormSubmit}
+				<button class="variant-filled-success btn text-center" onclick={onFormSubmit}
 					>Guardar</button
 				>
 			</form>
@@ -80,7 +87,7 @@
 		<div class="flex flex-row justify-center">
 			<button
 				class="variant-filled-success btn"
-				on:click={() => {
+				onclick={() => {
 					modalStore.close();
 				}}>Salir</button
 			>
@@ -90,13 +97,13 @@
 		<div class="flex flex-row justify-center gap-3">
 			<button
 				class="variant-filled-error btn"
-				on:click={() => {
+				onclick={() => {
 					response_state = undefined;
 				}}>Reintentar</button
 			>
 			<button
 				class="variant-filled-warning btn"
-				on:click={() => {
+				onclick={() => {
 					modalStore.close();
 				}}>Salir</button
 			>

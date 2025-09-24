@@ -1,48 +1,52 @@
-import { redisClientInit } from '$lib/utils/redis';
-import { API_PASSWORD, API_DEVICE, API_USER, ENDPOINT_API } from '$env/static/private';
-import type { Article } from '$lib/utils/types.utils';
+import { API_DEVICE, API_PASSWORD, API_USER } from '$env/static/private';
+import { AuthService } from '$lib/services/auth.service';
+import type { Article } from '$lib/types/article.types';
+import { getRedisData } from '$lib/utils/redis-helpers';
+
 export const ssr = false;
-const login = async (fetch) => {
-	const response = await fetch(`${ENDPOINT_API}/auth/login`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded'
-		},
-		body: new URLSearchParams({
-			username: API_USER,
-			password: API_PASSWORD,
-			deviceinfo: API_DEVICE
-		})
-	});
-	if (response.status !== 200) {
-		throw new Error('Failed to login');
-	}
-	return (await response.json()).token;
-};
 
-const validateToken = async (token) => {
-	const response = await fetch(`${ENDPOINT_API}/auth/me`, {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `${token}`
-		}
-	});
-	return response.status === 200;
-};
-
+/**
+ * Maneja la autenticación y carga de datos para la página principal
+ */
 export const load = async ({ cookies, depends, fetch }) => {
 	depends('app:main');
 
+	const token = await handleAuthentication(cookies, fetch);
+	const articulos = await loadArticlesFromCache();
+
+	return {
+		token,
+		articulos,
+		coeficients: [] // Placeholder para coeficientes
+	};
+};
+
+/**
+ * Maneja el proceso de autenticación
+ */
+async function handleAuthentication(cookies: any, fetch: typeof globalThis.fetch): Promise<string> {
 	let token = cookies.get('Authorization');
 
-	if (!token || !(await validateToken(token))) {
-		token = `Bearer ${await login(fetch)}`;
-		cookies.set('Authorization', `Bearer ${token}`, { path: '/' });
+	const isTokenValid = token && (await AuthService.validateToken(token));
+
+	if (!isTokenValid) {
+		const newToken = await AuthService.login(fetch, API_USER, API_PASSWORD, API_DEVICE);
+		token = AuthService.formatToken(newToken);
+		cookies.set('Authorization', token, { path: '/' });
 	}
 
-	const client = await redisClientInit();
-	const articulos: Article[] = JSON.parse(await client.get('articulos'));
-	client.disconnect();
-	return { token, articulos };
-};
+	return token;
+}
+
+/**
+ * Carga artículos desde la cache de Redis
+ */
+async function loadArticlesFromCache(): Promise<Article[]> {
+	try {
+		const articulos = await getRedisData('articulos');
+		return Array.isArray(articulos) ? articulos : [];
+	} catch (error) {
+		console.error('Error loading articles from cache:', error);
+		return [];
+	}
+}

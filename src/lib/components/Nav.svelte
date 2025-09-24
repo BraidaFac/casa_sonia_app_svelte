@@ -1,19 +1,18 @@
 <script lang="ts">
-	import { AppBar } from '@skeletonlabs/skeleton';
-	import BurgerBar from './BurgerBar.svelte';
-	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
-	import SideMenu from './SideMenu.svelte';
-	import { loadingStore, sideBarStatus } from '$lib/stores/loadingStore';
+	import { page } from '$app/state';
 	import { gsrStore } from '$lib/stores/articles.store';
 	import { filterStore } from '$lib/stores/filter';
-	let user = $page.data.user;
-	$: user = $page.data.user;
-	const token = $page.data.token;
+	import { loadingStore, sideBarStatus } from '$lib/stores/loadingStore';
+	import { AppBar } from '@skeletonlabs/skeleton';
+	import { onMount } from 'svelte';
+	import BurgerBar from './BurgerBar.svelte';
+	import SideMenu from './SideMenu.svelte';
+	let user = $derived(page.data.user);
+	const token = $derived(page.data.token);
 
 	let sr: { id: string; descripcion: string; gsr_id: string }[] = [];
 	let gsr: { id: string; descripcion: string }[] = [];
-	let rubros: any[] = [];
+	let rubros = $state<any[]>([]);
 	loadingStore.set(true);
 
 	onMount(async () => {
@@ -66,7 +65,9 @@
 				<a
 					class="w-10"
 					href="/"
-					on:click|preventDefault={() => {
+					aria-label="Abrir menú lateral"
+					onclick={(e) => {
+						e.preventDefault();
 						$sideBarStatus = !$sideBarStatus;
 					}}
 				>
@@ -81,7 +82,8 @@
 	<svelte:fragment slot="default"
 		><a
 			href="/"
-			on:click={() => {
+			aria-label="Ir a inicio"
+			onclick={() => {
 				$filterStore = '';
 			}}><span class="icon"></span></a
 		></svelte:fragment

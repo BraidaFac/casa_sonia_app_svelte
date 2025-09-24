@@ -1,129 +1,132 @@
 <script lang="ts">
-	import ProductContainer from '$lib/components/ProductContainer.svelte';
-	import type { PageData } from './$types';
-	export let data: PageData;
+	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import { fetchWithPagination } from '$lib/utils/pagination.utils';
-	import { ProgressRadial } from '@skeletonlabs/skeleton';
-	import { initScanner } from '$lib/index';
-	import * as SDCCore from 'scandit-web-datacapture-core';
+	// Componentes
+	import LoadingIndicator from '$lib/components/LoadingIndicator.svelte';
+	import ProductContainer from '$lib/components/ProductContainer.svelte';
+	import ScannerButton from '$lib/components/ScannerButton.svelte';
+	// Hooks personalizados
+	import { createArticlesHook } from '$lib/hooks/useArticles.svelte';
+	import { createScannerHook } from '$lib/hooks/useScanner.svelte';
+	// Stores
 	import { loadingStore } from '$lib/stores/loadingStore';
-	import { filterStore } from '$lib/stores/filter';
-	import { page } from '$app/stores';
-	let { token, articulos } = data;
-	let { coeficients } = $page.data.coeficients;
-	$: {
-		articulos = $page.data.articulos;
-		coeficients = $page.data.coeficients;
-	}
-	let loadingValue = 0;
-	let loading = false;
-	loadingStore.subscribe((value) => {
-		loading = value;
-		let interval;
-		if (loading) {
-			loadingValue = 0;
-			interval = setInterval(() => (loadingValue = loadingValue + 3), 500);
-		} else {
-			clearInterval(interval);
-		}
+	// Tipos
+	import type { Article } from '$lib/types/article.types';
+
+	// Inicializar hooks
+	const scannerHook = createScannerHook();
+	const articlesHook = createArticlesHook();
+
+	// Datos reactivos de la página
+	let pageData = $derived(page.data);
+	let token = $derived(pageData.token);
+	let initialArticles = $derived(pageData.articulos as Article[]);
+	let coeficients = $derived(pageData.coeficients || []);
+
+	// Estados del componente
+	let globalLoading = $state(false);
+	let globalLoadingValue = $state(0);
+	let refreshKey = $state(0);
+
+	// Suscripción al store de loading global
+	$effect(() => {
+		const unsubscribe = loadingStore.subscribe((loading) => {
+			globalLoading = loading;
+		});
+		return unsubscribe;
 	});
 
-	let showScanner = false;
-	let view;
-	let barcode;
-	let result;
-	let camera;
-	let allresult;
-	let flag: boolean = false;
-	let interval;
+	// Computed values
+	const shouldShowArticles = $derived(
+		(articlesHook.hasArticles() || initialArticles?.length > 0) &&
+			!articlesHook.isLoading &&
+			!globalLoading
+	);
+
+	const currentArticles = $derived(
+		articlesHook.hasArticles() ? articlesHook.articles : initialArticles
+	);
+
+	const isAnyLoading = $derived(articlesHook.isLoading || globalLoading);
+
+	const currentLoadingProgress = $derived(
+		articlesHook.isLoading ? articlesHook.loadingProgress : globalLoadingValue
+	);
+
+	// Inicialización del componente
 	onMount(async () => {
-		const response = await initScanner();
-		if (response) {
-			view = response.view;
-			barcode = response.barcodeCapture;
-			camera = response.camera;
-		} else {
-			alert('No se pudo inicializar el scanner');
+		await initializeComponents();
+		await loadInitialArticles();
+	});
+
+	/**
+	 * Inicializa los componentes necesarios
+	 */
+	async function initializeComponents(): Promise<void> {
+		await scannerHook.initializeScanner();
+	}
+
+	/**
+	 * Carga artículos iniciales si no están disponibles
+	 */
+	async function loadInitialArticles(): Promise<void> {
+		if (!initialArticles || initialArticles.length === 0) {
+			await articlesHook.loadArticles(token);
+			refreshKey += 1; // Forzar re-render del ProductContainer
 		}
-		const listener = {
-			didScan: async (barcode, session) => {
-				document.getElementById('data-capture-view').classList.add('hidden');
-				const recognizedBarcodes = session.newlyRecognizedBarcodes;
-				allresult = recognizedBarcodes;
-				result = recognizedBarcodes[0]._data.match(/^\w+/)[0];
-				filterStore.set(result);
-				flag = !flag;
-				//asynchronously turn off the camera as quickly as possible.
-				await camera.switchToDesiredState(SDCCore.FrameSourceState.Standby);
-				await camera.switchToDesiredState(SDCCore.FrameSourceState.Off);
-				showScanner = false;
-			}
-		};
-		barcode.addListener(listener);
-		if (!articulos) {
-			loading = true;
-			interval = setInterval(() => {
-				loadingValue = loadingValue + 3;
-			}, 500);
-			articulos = await fetchWithPagination('productos', 1000, token);
-			const res = await fetch('/api', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					articulos
-				})
-			});
-			loading = false;
-			clearInterval(interval);
-			loadingValue = 0;
-			if (res.status !== 200) {
-				alert('No se cargaron los articulos. Intente nuevamente');
-			}
-		}
+	}
+
+	/**
+	 * Maneja el toggle del scanner
+	 */
+	async function handleToggleScanning(): Promise<void> {
+		await scannerHook.toggleScanning();
+		refreshKey += 1; // Forzar re-render cuando cambia el filtro
+	}
+
+	$effect(() => {
+		console.log(shouldShowArticles);
+		console.log(articlesHook.hasArticles());
+		console.log(isAnyLoading);
 	});
 </script>
 
-<div class="flex flex-col gap-10">
-	<div class="flex justify-center flex-col h-full p-3 mt-6">
+<div class="main-container">
+	<div class="scanner-section">
+		<!-- Vista de captura del scanner (oculta por defecto) -->
 		<div class="hidden fixed top-0" id="data-capture-view"></div>
-		{#if showScanner && !loading}
-			<button
-				class="btn variant-filled-error my-3 mx-auto bottom-0 fixed w-full"
-				on:click={async () => {
-					await camera.switchToDesiredState(SDCCore.FrameSourceState.Off);
-					document.getElementById('data-capture-view').classList.toggle('hidden');
-					showScanner = !showScanner;
-				}}><span class="icon-[mdi--camera-outline] text-4xl"></span>Dejar de scannear</button
-			>
-		{:else if !showScanner && !loading}
-			<button
-				class="btn variant-filled-warning my-3 w-full h-12 mx-auto top-20"
-				on:click={async () => {
-					await camera.switchToDesiredState(SDCCore.FrameSourceState.On);
-					showScanner = !showScanner;
-					document.getElementById('data-capture-view').classList.toggle('hidden');
-				}}><span class="icon-[mdi--camera-outline] text-4xl"></span>Scanee codigo de barras</button
-			>
-		{/if}
+
+		<!-- Botón del scanner -->
+		<ScannerButton
+			isScanning={scannerHook.isScanning}
+			isLoading={isAnyLoading}
+			onToggleScanning={handleToggleScanning}
+		/>
 	</div>
-	{#if articulos && !loading}
-		{#key articulos || flag || coeficients}
-			<ProductContainer {articulos} {coeficients} />
+
+	<!-- Contenido principal -->
+	{#if shouldShowArticles}
+		{#key currentArticles || refreshKey || coeficients}
+			<ProductContainer articulos={currentArticles} {coeficients} />
 		{/key}
-	{:else}
-		<p class="text-4xl text-center my-5 animate-bounce z-50 mb-5">Cargando articulos</p>
-		<div class="z-40 w-full">
-			<ProgressRadial
-				value={loadingValue}
-				class="mx-auto"
-				stroke={20}
-				meter="stroke-tertiary-500"
-				track="stroke-tertiary-500/30"
-			/>
-		</div>
-		<div class="w-full h-full backdrop-blur-sm absolute"></div>
+	{:else if isAnyLoading}
+		<LoadingIndicator progress={currentLoadingProgress} />
 	{/if}
 </div>
+
+<style>
+	.main-container {
+		display: flex;
+		flex-direction: column;
+		gap: 2.5rem;
+	}
+
+	.scanner-section {
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+		height: 100%;
+		padding: 0.75rem;
+		margin-top: 1.5rem;
+	}
+</style>

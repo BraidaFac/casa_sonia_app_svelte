@@ -10,7 +10,18 @@ export const redisClientInit = async () => {
 		}
 	});
 
-	client.on('error', (error) => {});
-	client.connect();
+	client.on('error', (error) => {
+		console.error('Redis Client Error:', error);
+	});
+
+	// En Redis v5+, connect() devuelve una Promise
+	await client.connect();
 	return client;
+};
+
+// Función helper para cerrar conexión de forma segura
+export const redisClientClose = async (client: any) => {
+	if (client && client.isOpen) {
+		await client.disconnect();
+	}
 };
