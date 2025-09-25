@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { filterStore } from '$lib/stores/filter';
+	import { setFilterStore } from '$lib/stores/filter.svelte';
 	import { sideBarStatus } from '$lib/stores/loadingStore';
 	type sr = {
 		id: string;
@@ -72,10 +72,11 @@
 				<button
 					class="btn btn-sm variant-outline-success"
 					onclick={() => {
-						$filterStore =
+						setFilterStore(
 							contentToShow.contentType === 'sr'
 								? `${gsr.find((gsr) => contentToShow.content[0].gsr_id === gsr.id)?.descripcion ?? ''}`
-								: `${sr.find((sr) => contentToShow.content[0].codigosuperrubro === sr.id)?.descripcion ?? ''}`;
+								: `${sr.find((sr) => contentToShow.content[0].codigosuperrubro === sr.id)?.descripcion ?? ''}`
+						);
 						$sideBarStatus = false;
 						contentToShow.content = gsr;
 						contentToShow.contentType = 'gsr';
@@ -101,7 +102,7 @@
 							} else if (contentToShow.contentType === 'rubros') {
 								contentToShow.content = gsr;
 								contentToShow.contentType = 'gsr';
-								filterStore.set(item.descripcion);
+								setFilterStore(item.descripcion);
 								$sideBarStatus = false;
 							} else {
 								contentToShow.content = gsr;

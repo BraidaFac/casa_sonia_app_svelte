@@ -20,16 +20,50 @@ export function createArticlesHook() {
 		try {
 			startLoading();
 			const fetchedArticles = await ArticleService.fetchArticles(token);
+			const enrichedArticles = ArticleService.enrichArticlesWithSearchTerms(fetchedArticles);
+			const orderedArticles = orderProducts(enrichedArticles);
 
-			await cacheArticles(fetchedArticles);
+			await cacheArticles(orderedArticles);
 
-			articles = fetchedArticles;
+			articles = orderedArticles;
 		} catch (error) {
 			console.error('Error cargando artículos:', error);
 			NotificationUtils.showArticleLoadError();
 		} finally {
 			stopLoading();
 		}
+	}
+
+	function orderProducts(products) {
+		products.sort(function (a, b) {
+			if (a.DESCRIPCION_MARCA > b.DESCRIPCION_MARCA) {
+				return 1;
+			}
+			if (a.DESCRIPCION_MARCA < b.DESCRIPCION_MARCA) {
+				return -1;
+			}
+			if (a.DESCRIPCIONGRUPOSUPERRUBRO > b.DESCRIPCIONGRUPOSUPERRUBRO) {
+				return 1;
+			}
+			if (a.DESCRIPCIONGRUPOSUPERRUBRO < b.DESCRIPCIONGRUPOSUPERRUBRO) {
+				return -1;
+			}
+			if (a.DESCRIPCIONSUPERRUBRO > b.DESCRIPCIONSUPERRUBRO) {
+				return 1;
+			}
+			if (a.DESCRIPCIONSUPERRUBRO < b.DESCRIPCIONSUPERRUBRO) {
+				return -1;
+			}
+			if (a.DESCRIPCIONRUBRO > b.DESCRIPCIONRUBRO) {
+				return 1;
+			}
+			if (a.DESCRIPCIONRUBRO < b.DESCRIPCIONRUBRO) {
+				return -1;
+			}
+			return 0;
+		});
+
+		return products;
 	}
 
 	/**

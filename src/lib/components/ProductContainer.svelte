@@ -1,23 +1,23 @@
 <script lang="ts">
 	import { gsrStore } from '$lib/stores/articles.store';
-	import { createSearchStore, searchHandler, filterStore } from '$lib/stores/filter';
-	import type { Article } from '$lib/utils/types.utils';
+	import {
+		createSearchStore,
+		getFilterStore,
+		searchHandler,
+		setFilterStore
+	} from '$lib/stores/filter.svelte';
 	import { onDestroy } from 'svelte';
-	export let articulos: Article[];
-	export let coeficients: {
-		name: string;
-		value: number;
-	}[];
+
+	let props = $props();
+	let articulos = props.articulos;
+	let coeficients = props.coeficients;
 
 	const coef_3 = coeficients.find((coef) => coef.name === 'coef_3')?.value ?? 1;
 	const coef_6 = coeficients.find((coef) => coef.name === 'coef_6')?.value ?? 1;
 	const coef_efect = coeficients.find((coef) => coef.name === 'coef_efect')?.value ?? 1;
-	let filter;
+	let filter = $state('');
 
 	//filter
-	filterStore.subscribe((value) => {
-		filter = value;
-	});
 	export const searchStore = createSearchStore(articulos);
 
 	const unsubscribe = searchStore.subscribe((model: any) => searchHandler(model));
@@ -30,49 +30,17 @@
 		return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 	}
 
-	$: {
-		if (filter.length > 0) {
-			$searchStore.search = filter;
-			$filterStore = filter;
+	$effect(() => {
+		if (filter.length > 2) {
+			setFilterStore(filter);
 		} else {
-			$searchStore.search = undefined;
-			$filterStore = '';
+			setFilterStore('');
 		}
-	}
+		$searchStore.search = getFilterStore();
+	});
 
 	function truncarACentena(numero) {
 		return Math.round(numero / 100) * 100;
-	}
-	function orderProducts(products) {
-		products.sort(function (a, b) {
-			if (a.DESCRIPCION_MARCA > b.DESCRIPCION_MARCA) {
-				return 1;
-			}
-			if (a.DESCRIPCION_MARCA < b.DESCRIPCION_MARCA) {
-				return -1;
-			}
-			if (a.DESCRIPCIONGRUPOSUPERRUBRO > b.DESCRIPCIONGRUPOSUPERRUBRO) {
-				return 1;
-			}
-			if (a.DESCRIPCIONGRUPOSUPERRUBRO < b.DESCRIPCIONGRUPOSUPERRUBRO) {
-				return -1;
-			}
-			if (a.DESCRIPCIONSUPERRUBRO > b.DESCRIPCIONSUPERRUBRO) {
-				return 1;
-			}
-			if (a.DESCRIPCIONSUPERRUBRO < b.DESCRIPCIONSUPERRUBRO) {
-				return -1;
-			}
-			if (a.DESCRIPCIONRUBRO > b.DESCRIPCIONRUBRO) {
-				return 1;
-			}
-			if (a.DESCRIPCIONRUBRO < b.DESCRIPCIONRUBRO) {
-				return -1;
-			}
-			return 0;
-		});
-
-		return products;
 	}
 </script>
 
@@ -88,8 +56,8 @@
 				<li class="text-center">
 					<a
 						href="/"
-						on:click|preventDefault={() => {
-							$filterStore = gsr.descripcion;
+						onclick={() => {
+							filter = gsr.descripcion;
 						}}>{gsr.descripcion}</a
 					>
 				</li>
@@ -114,7 +82,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each orderProducts($searchStore.filtered) as prod}
+				{#each $searchStore.filtered as prod}
 					<tr>
 						<td>{prod.NOMBRE}</td>
 						<td>{prod.DESCRIPCION_MARCA}</td>

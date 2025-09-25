@@ -1,5 +1,5 @@
 import { ScannerService } from '$lib/services/scanner.service';
-import { filterStore } from '$lib/stores/filter';
+import { setFilterStore } from '$lib/stores/filter.svelte';
 import type { ScannerComponents } from '$lib/types/article.types';
 import { NotificationUtils } from '$lib/utils/notification.utils';
 
@@ -64,7 +64,7 @@ export function createScannerHook() {
 			const barcodeResult = ScannerService.extractBarcodeFromResult(recognizedBarcodes);
 
 			if (barcodeResult) {
-				filterStore.set(barcodeResult);
+				setFilterStore(barcodeResult);
 			}
 
 			// Apagar cámara

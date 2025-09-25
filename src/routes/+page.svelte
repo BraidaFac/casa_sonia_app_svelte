@@ -83,12 +83,6 @@
 		await scannerHook.toggleScanning();
 		refreshKey += 1; // Forzar re-render cuando cambia el filtro
 	}
-
-	$effect(() => {
-		console.log(shouldShowArticles);
-		console.log(articlesHook.hasArticles());
-		console.log(isAnyLoading);
-	});
 </script>
 
 <div class="main-container">

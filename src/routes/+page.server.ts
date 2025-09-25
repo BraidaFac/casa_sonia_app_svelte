@@ -1,5 +1,4 @@
 import { API_DEVICE, API_PASSWORD, API_USER } from '$env/static/private';
-import { ArticleService } from '$lib/services/article.service';
 import { AuthService } from '$lib/services/auth.service';
 import type { Article } from '$lib/types/article.types';
 import { getRedisData } from '$lib/utils/redis-helpers';
@@ -17,8 +16,7 @@ export const load = async ({ cookies, depends, fetch }) => {
 
 	return {
 		token,
-		articulos,
-		coeficients: [] // Placeholder para coeficientes
+		articulos
 	};
 };
 
@@ -45,9 +43,8 @@ async function handleAuthentication(cookies: any, fetch: typeof globalThis.fetch
 async function loadArticlesFromCache(): Promise<Article[]> {
 	try {
 		const articulos = await getRedisData('CASASONIA');
-		const enrichedArticles = ArticleService.enrichArticlesWithSearchTerms(articulos);
 
-		return Array.isArray(enrichedArticles) ? enrichedArticles : [];
+		return Array.isArray(articulos) ? articulos : [];
 	} catch (error) {
 		console.error('Error loading articles from cache:', error);
 		return [];

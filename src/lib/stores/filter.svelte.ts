@@ -1,5 +1,15 @@
 import { writable } from 'svelte/store';
 
+let filterStore = $state('');
+
+export function setFilterStore(value: string) {
+	filterStore = value;
+}
+
+export function getFilterStore() {
+	return filterStore;
+}
+
 export interface SearchStoreModel<T extends Record<PropertyKey, unknown>> {
 	data: T[];
 	filtered: T[];
@@ -9,7 +19,6 @@ export interface SearchStoreModel<T extends Record<PropertyKey, unknown>> {
 	marca?: string;
 }
 
-export const filterStore = writable('');
 export const createSearchStore = <T extends Record<PropertyKey, unknown>>(data: T[]) => {
 	const { subscribe, set, update } = writable<SearchStoreModel<T>>({
 		data: data,

@@ -8,6 +8,9 @@
 
 	const coeficients = $derived(page.data.coeficients);
 
+	$effect(() => {
+		console.log(page.data);
+	});
 	// Estados para los valores de los inputs (editables)
 	let coef_3 = $state(1);
 	let coef_6 = $state(1);

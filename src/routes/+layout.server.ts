@@ -12,7 +12,7 @@ export const load: LayoutServerLoad = async ({ locals, depends }) => {
 			coeficients: coeficients.length
 				? coeficients
 				: [
-						{ name: 'coef_efect', value: 0 },
+						{ name: 'coef_efect', value: 1 },
 						{
 							name: 'coef_3',
 							value: 1
@@ -24,6 +24,7 @@ export const load: LayoutServerLoad = async ({ locals, depends }) => {
 					]
 		};
 	} catch (err) {
+		console.log(err);
 		throw new Error(err);
 	}
 };
