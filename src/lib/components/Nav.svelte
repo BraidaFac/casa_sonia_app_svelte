@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { gsrStore } from '$lib/stores/articles.store';
-	import { setFilterStore } from '$lib/stores/filter.svelte';
+	import { searchStore } from '$lib/stores/filter.svelte';
 	import { loadingStore, sideBarStatus } from '$lib/stores/loadingStore';
 	import { AppBar } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
@@ -84,7 +84,7 @@
 			href="/"
 			aria-label="Ir a inicio"
 			onclick={() => {
-				setFilterStore('');
+				searchStore.clearSearch();
 			}}><span class="icon"></span></a
 		></svelte:fragment
 	>

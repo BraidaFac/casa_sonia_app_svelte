@@ -99,7 +99,6 @@ export class ScannerService {
 		settings.enableSymbologies([SDCBarcode.Symbology.Code128]);
 
 		const barcodeCapture = await SDCBarcode.BarcodeCapture.forContext(context, settings);
-
 		barcodeCapture.feedback.success = new SDCCore.Feedback(
 			SDCCore.Vibration.defaultVibration,
 			SDCCore.Sound.defaultSound
@@ -115,6 +114,8 @@ export class ScannerService {
 		if (!recognizedBarcodes || recognizedBarcodes.length === 0) {
 			return null;
 		}
+		console.log('recognizedBarcodes', recognizedBarcodes);
+		console.log('recognizedBarcodes[0]._data', recognizedBarcodes[0]._data);
 
 		const match = recognizedBarcodes[0]._data.match(/^\w+/);
 		return match ? match[0] : null;

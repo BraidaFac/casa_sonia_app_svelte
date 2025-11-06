@@ -88,7 +88,7 @@
 <div class="main-container">
 	<div class="scanner-section">
 		<!-- Vista de captura del scanner (oculta por defecto) -->
-		<div class="hidden fixed top-0" id="data-capture-view"></div>
+		<div class="hidden fixed top-0 right-0 w-full h-full" id="data-capture-view"></div>
 
 		<!-- Botón del scanner -->
 		<ScannerButton

@@ -1,12 +1,7 @@
 <script lang="ts">
 	import { gsrStore } from '$lib/stores/articles.store';
-	import {
-		createSearchStore,
-		getFilterStore,
-		searchHandler,
-		setFilterStore
-	} from '$lib/stores/filter.svelte';
-	import { onDestroy } from 'svelte';
+	import { searchStore } from '$lib/stores/filter.svelte';
+	import { untrack } from 'svelte';
 
 	let props = $props();
 	let articulos = props.articulos;
@@ -15,29 +10,19 @@
 	const coef_3 = coeficients.find((coef) => coef.name === 'coef_3')?.value ?? 1;
 	const coef_6 = coeficients.find((coef) => coef.name === 'coef_6')?.value ?? 1;
 	const coef_efect = coeficients.find((coef) => coef.name === 'coef_efect')?.value ?? 1;
-	let filter = $state('');
 
-	//filter
-	export const searchStore = createSearchStore(articulos);
-
-	const unsubscribe = searchStore.subscribe((model: any) => searchHandler(model));
-
-	onDestroy(() => {
-		unsubscribe();
+	// Effect para cargar datos solo cuando articulos cambie
+	$effect(() => {
+		// Usamos untrack para evitar que el effect se vuelva a ejecutar
+		// cuando el store cambie
+		untrack(() => {
+			searchStore.setData(articulos);
+		});
 	});
 
 	function addThousandSeparator(price: number) {
 		return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 	}
-
-	$effect(() => {
-		if (filter.length > 2) {
-			setFilterStore(filter);
-		} else {
-			setFilterStore('');
-		}
-		$searchStore.search = getFilterStore();
-	});
 
 	function truncarACentena(numero) {
 		return Math.round(numero / 100) * 100;
@@ -46,9 +31,15 @@
 
 <div class="md:w-1/2 md:mx-auto px-3">
 	<label class="text-center text-lg mb-3" for="">Ingrese codigo o descripción del articulo</label>
-	<input type="search" class="input" placeholder="Buscar" bind:value={filter} />
+	<input
+		type="search"
+		class="input"
+		placeholder="Buscar"
+		bind:value={$searchStore.search}
+		oninput={(e: Event) => searchStore.setSearch((e.target as HTMLInputElement).value)}
+	/>
 </div>
-{#if $searchStore.filtered.length === 0 && filter.length === 0}
+{#if $searchStore.filtered.length === 0 && $searchStore.search?.length === 0}
 	<div class="px-3 mt-5">
 		<p class="text-2xl text-center mb-4">Sugerencias</p>
 		<ul class="flex flex-col flex-wrap h-32 gap-1">
@@ -57,7 +48,7 @@
 					<a
 						href="/"
 						onclick={() => {
-							filter = gsr.descripcion;
+							searchStore.setSearch(gsr.descripcion);
 						}}>{gsr.descripcion}</a
 					>
 				</li>
